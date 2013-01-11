@@ -9,9 +9,13 @@ package com.speechpro.data;
  */
 public class User {
 
+    private Integer id;
     private String name;
     private String password;
     private String key;
+
+    public User() {
+    }
 
     public User(String name, String password) {
         this.name = name;
@@ -40,5 +44,18 @@ public class User {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

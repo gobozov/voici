@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import com.speechpro.R;
+import com.speechpro.database.DatabaseAdapter;
 
 public class SplashActivity extends Activity {
 
@@ -52,7 +53,7 @@ public class SplashActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                intent.putExtra("site", "vk");
+                intent.putExtra("site", DatabaseAdapter.VK);
                 startActivity(intent);
             }
         });
@@ -62,7 +63,7 @@ public class SplashActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                intent.putExtra("site", "gmail");
+                intent.putExtra("site", DatabaseAdapter.GMAIL);
                 startActivity(intent);
             }
         });
@@ -72,7 +73,7 @@ public class SplashActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
-                intent.putExtra("site", "facebook");
+                intent.putExtra("site", DatabaseAdapter.FACEBOOK);
                 startActivity(intent);
             }
         });

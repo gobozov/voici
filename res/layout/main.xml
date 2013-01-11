@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:gravity="center"
+              android:background="@android:color/white"
+              android:padding="30dp"
+              >
+
+    <Button
+            android:text="vk.com"
+            android:id="@+id/buttonVK"
+            android:minWidth="200dp"
+            style="@style/BlueButtons"
+            android:layout_marginBottom="10dp"
+            />
+
+    <Button
+            android:text="gmail.com"
+            android:id="@+id/buttonGmail"
+            android:minWidth="200dp"
+            style="@style/BlueButtons"
+            android:layout_marginBottom="10dp"
+            />
+
+    <Button
+            android:text="facebook.com"
+            android:id="@+id/buttonFacebook"
+            android:minWidth="200dp"
+            style="@style/BlueButtons"
+            />
+
+
+
+</LinearLayout>
+

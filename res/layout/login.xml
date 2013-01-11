@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:padding="15dp"
+                android:background="@android:color/white"
+        >
+
+
+    <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/editdelete"
+            android:paddingTop="30dp"
+            >
+
+        <Button
+                android:text="edit"
+                android:id="@+id/buttonEdit"
+                style="@style/OrangeButtons"
+                android:minWidth="100dp"
+                android:layout_weight="1"
+                android:layout_marginRight="30dp"
+                />
+
+        <Button
+                android:text="delete"
+                android:id="@+id/buttonDelete"
+                style="@style/RedButtons"
+                android:minWidth="100dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="30dp"
+                />
+
+    </LinearLayout>
+
+    <Button
+            android:text="login"
+            android:id="@+id/buttonLogin"
+            style="@style/GreenButtons"
+            android:layout_above="@id/editdelete"
+            android:layout_marginTop="30dp"
+            />
+
+    <Button
+            android:text="add new"
+            android:id="@+id/buttonAdd"
+            style="@style/BlueButtons"
+            android:layout_above="@id/buttonLogin"
+            android:layout_marginTop="20dp"
+            />
+
+
+    <ListView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/listUsers"
+            android:background="@color/darkest_orange"
+            android:layout_above="@id/buttonAdd"
+            />
+
+
+</RelativeLayout>

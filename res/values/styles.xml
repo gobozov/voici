@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <style name="SpeechPro.Theme" parent="android:Theme.NoTitleBar">
+
+
+    </style>
+
+
+
+
+    <style name="BlueButtons" parent="@android:style/Widget.Button">
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+        <item name="android:background">@drawable/blue_buttons</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:textAppearance">@style/BlueButtonsTextAppearance</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="BlueButtonsTextAppearance" parent="@android:style/TextAppearance">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="RedButtons" parent="BlueButtons">
+        <item name="android:background">@drawable/red_buttons</item>
+        <item name="android:textAppearance">@style/RedOrangeTextAppearance</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="OrangeButtons" parent="RedButtons">
+        <item name="android:background">@drawable/orange_buttons</item>
+    </style>
+
+    <style name="RedOrangeTextAppearance" parent="@android:style/TextAppearance">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="GreenButtons" parent="BlueButtons">
+        <item name="android:background">@drawable/green_buttons</item>
+        <item name="android:textAppearance">@style/BlueButtonsTextAppearance</item>
+    </style>
+
+</resources>

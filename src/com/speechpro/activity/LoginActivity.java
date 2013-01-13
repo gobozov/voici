@@ -8,10 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
+import android.widget.*;
 import com.speechpro.R;
 import com.speechpro.data.User;
 import com.speechpro.database.DatabaseAdapter;
@@ -27,11 +24,15 @@ import java.util.List;
  */
 public class LoginActivity extends Activity {
 
+    public static int CODE_ADD_USER = 5;
+    public static int CODE_EDIT_USER = 6;
+
     private DatabaseAdapter dbAdapter;
     private ArrayAdapter<User> userAdapter;
     private ListView list;
     private Button buttonAdd;
     private Button buttonDelete;
+    private Button buttonEdit;
     private int site;
     private int selectedPosition = -1;
 
@@ -51,7 +52,7 @@ public class LoginActivity extends Activity {
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, AddActivity.class);
                 intent.putExtra("site", site);
-                startActivity(intent);
+                startActivityForResult(intent,CODE_ADD_USER);
             }
         });
 
@@ -67,11 +68,47 @@ public class LoginActivity extends Activity {
                         userAdapter.remove(user);
                         userAdapter.notifyDataSetChanged();
                     }
+                }else{
+                    Toast.makeText(LoginActivity.this, "Select user to delete", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        buttonEdit = (Button) findViewById(R.id.buttonEdit);
+        buttonEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (selectedPosition != -1){
+                    User user = userAdapter.getItem(selectedPosition);
+                    Intent intent = new Intent(LoginActivity.this, AddActivity.class);
+                    intent.putExtra("site", site);
+                    intent.putExtra("user", user.getId());
+                    startActivityForResult(intent,CODE_EDIT_USER);
+                }else{
+                    Toast.makeText(LoginActivity.this, "Select user to edit", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
         list = (ListView) findViewById(R.id.listUsers);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CODE_ADD_USER) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(LoginActivity.this, "User added successfully", Toast.LENGTH_SHORT).show();
+                selectedPosition = -1;
+            }
+        }
+        if (requestCode == CODE_EDIT_USER) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(LoginActivity.this, "User edited successfully", Toast.LENGTH_SHORT).show();
+                selectedPosition = -1;
+            }
+        }
+
     }
 
     @Override

@@ -29,6 +29,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/login"
                 android:textColor="@android:color/black"
+                android:singleLine="true"
                 />
 
 
@@ -45,6 +46,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/password"
                 android:textColor="@android:color/black"
+                android:singleLine="true"
+                android:password="true"
                 />
 
     </GridLayout>

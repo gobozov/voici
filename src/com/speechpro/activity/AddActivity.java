@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 import com.speechpro.R;
 import com.speechpro.data.User;
 import com.speechpro.database.DatabaseAdapter;
@@ -23,13 +24,16 @@ public class AddActivity extends Activity {
     private Button buttonVoice;
     private EditText login;
     private EditText password;
-    private int site;
+    private Integer site;
+    private Integer editedUser;
+
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add);
 
-         site = getIntent().getIntExtra("site", DatabaseAdapter.VK);
+        site = getIntent().getIntExtra("site", DatabaseAdapter.VK);
+        editedUser = getIntent().getIntExtra("user", -1);
 
         dbAdapter = new DatabaseAdapter(this);
         dbAdapter.open();
@@ -48,6 +52,14 @@ public class AddActivity extends Activity {
         password = (EditText) findViewById(R.id.password);
 
 
+        // is edit action
+        if (editedUser != null && editedUser != -1) {
+            User user = dbAdapter.getUserById(editedUser);
+            login.setText(user.getName());
+            password.setText(user.getPassword());
+        }
+
+
         Button buttonOk = (Button) findViewById(R.id.buttonOk);
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,8 +67,24 @@ public class AddActivity extends Activity {
                 if (isValidField(login) && isValidField(password)) {
                     User user = new User(login.getText().toString(), password.getText().toString());
                     user.setKey("1234567890");
-                    dbAdapter.addUser(user, site);
-                    finish();
+
+                    boolean result;
+
+                    //edit existing user
+                    if (editedUser != null && editedUser != -1) {
+                        result = dbAdapter.updateUser(editedUser, user);
+                        setResult(RESULT_OK);
+
+                    } else {
+                        // create new user
+                        result = dbAdapter.addUser(user, site);
+                        setResult(RESULT_OK);
+                    }
+
+                    if (result)
+                        finish();
+                    else
+                        Toast.makeText(AddActivity.this, "Can't add or edit user, something wrong :(", Toast.LENGTH_SHORT).show();
                 }
             }
         });

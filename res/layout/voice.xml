@@ -27,7 +27,7 @@
 
     <Button
             android:text="start rec 2"
-            android:id="@+id/buttonLogin"
+            android:id="@+id/buttonRecord2"
             style="@style/GreenButtons"
             android:layout_marginTop="30dp"
             />
@@ -35,7 +35,7 @@
 
     <Button
             android:text="start rec 3"
-            android:id="@+id/buttonLogin"
+            android:id="@+id/buttonRecord3"
             style="@style/GreenButtons"
             android:layout_marginTop="30dp"
             />

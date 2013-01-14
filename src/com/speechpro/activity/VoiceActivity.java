@@ -27,7 +27,7 @@ public class VoiceActivity extends Activity {
 
     public static final File SD_DIR = Environment.getExternalStorageDirectory();
     public static final File APP_DIR = new File(SD_DIR + "/.speechpro");
-
+    private File tempDir = new File(APP_DIR, String.valueOf(System.currentTimeMillis()));
 
     private ExtAudioRecorder extAudioRecorder = null;
     private Button buttonRecord1;
@@ -38,37 +38,49 @@ public class VoiceActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.voice);
 
+        if (!APP_DIR.exists())
+            APP_DIR.mkdir();
 
-
-        extAudioRecorder = ExtAudioRecorder.getInstanse(false);
-
-
+        if (!tempDir.exists())
+            tempDir.mkdir();
 
         buttonRecord1 = (Button) findViewById(R.id.buttonRecord1);
         buttonRecord1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                prepareToRecord(1);
+                showStartDialog(1);
             }
         });
 
         buttonRecord2 = (Button) findViewById(R.id.buttonRecord2);
+        buttonRecord2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showStartDialog(2);
+            }
+        });
         buttonRecord3 = (Button) findViewById(R.id.buttonRecord3);
+        buttonRecord3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showStartDialog(3);
+            }
+        });
     }
 
 
-    public void prepareToRecord(int buttonId){
-        if (!APP_DIR.exists())
-            APP_DIR.mkdir();
-        String fileName = APP_DIR.getAbsolutePath() + "/record" + buttonId + ".wav";
-        System.out.println("fileName = " + fileName);
-        extAudioRecorder.setOutputFile(fileName);
-        extAudioRecorder.prepare();
+//    public void prepareToRecord(int buttonId){
+//
+//        String fileName = tempDir.getAbsolutePath() + "/record" + buttonId + ".wav";
+//        System.out.println("fileName = " + fileName);
+//        extAudioRecorder = ExtAudioRecorder.getInstanse(false);
+//        extAudioRecorder.setOutputFile(fileName);
+//        extAudioRecorder.prepare();
+//
+//        showStartDialog();
+//    }
 
-        showStartDialog();
-    }
-
-    private void showStartDialog() {
+    private void showStartDialog(final int buttonId) {
         final AlertDialog alert;
         AlertDialog.Builder builder = new AlertDialog.Builder(VoiceActivity.this)
                 .setTitle("Are you ready?")
@@ -76,29 +88,13 @@ public class VoiceActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface d, int which) {
 
-//                        ProgressDialog dialog = new ProgressDialog(VoiceActivity.this);
-//                        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-//                            @Override
-//                            public void onShow(DialogInterface dialogInterface) {
-//                                extAudioRecorder.start();
-//                                Log.d("speechpro", "start record");
-//                            }
-//                        });
-//                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//                            @Override
-//                            public void onDismiss(DialogInterface dialogInterface) {
-//                                extAudioRecorder.stop();
-//                                extAudioRecorder.release();
-//                                Log.d("speechpro", "finish record");
-//                            }
-//                        });
-//                        new RecordProgress(dialog).start();
+                        String fileName = tempDir.getAbsolutePath() + "/record" + buttonId + ".wav";
+                        System.out.println("fileName = " + fileName);
+                        extAudioRecorder = ExtAudioRecorder.getInstanse(false);
+                        extAudioRecorder.setOutputFile(fileName);
+                        extAudioRecorder.prepare();
 
-
-
-                        new RecordSpeechTask(VoiceActivity.this).execute();
-
-
+                        new RecordSpeechTask(VoiceActivity.this, fileName).execute();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -114,46 +110,14 @@ public class VoiceActivity extends Activity {
     }
 
 
-    private class RecordProgress extends Thread{
-
-        private ProgressDialog dialog;
-
-        public RecordProgress(ProgressDialog dialog){
-            super("Record Progress");
-            this.dialog = dialog;
-            dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            dialog.setCancelable(false);
-            dialog.setMax(5000);
-        }
-
-        @Override
-        public void run() {
-            int progress = 0;
-            dialog.setMessage("Speak now...");
-            dialog.show();
-
-            for(int i = 0; i < 10; i++){
-                try {
-                    Thread.sleep(500);
-                    progress = progress + 500;
-                    dialog.setProgress(progress);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            dialog.dismiss();
-        }
-    }
-
 
     public class RecordSpeechTask extends AsyncTask<Object, Integer, Boolean>{
 
-        private Context context;
         private ProgressDialog dialog;
-        private boolean isRecording;
+        private String filePath;
 
-        public RecordSpeechTask(Context context) {
-            this.context = context;
+        public RecordSpeechTask(Context context, String filePath) {
+            this.filePath = filePath;
             this.dialog = new ProgressDialog(context);
             this.dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             this.dialog.setCancelable(false);
@@ -169,26 +133,16 @@ public class VoiceActivity extends Activity {
 
         @Override
         protected Boolean doInBackground(Object... objects) {
-            isRecording = true;
             extAudioRecorder.start();
             Log.d("speechpro", "start record");
-            int progress = 0;
             long startTime = System.currentTimeMillis();
             while (System.currentTimeMillis() - startTime < 5000){
                 dialog.setProgress((int)(System.currentTimeMillis() - startTime));
             }
-
-//            for(int i = 0; i < 10; i++){
-//                try {
-//                    Thread.sleep(500);
-//                    progress = progress + 500;
-//                    dialog.setProgress(progress);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
             extAudioRecorder.stop();
             extAudioRecorder.release();
+            extAudioRecorder.reset();
+            Log.d("speechpro", "stop record");
             return true;
 
         }
@@ -197,6 +151,17 @@ public class VoiceActivity extends Activity {
         protected void onPostExecute(Boolean aBoolean) {
             if (dialog.isShowing())
                 dialog.dismiss();
+            DoneRetakeDialog drDialog = new DoneRetakeDialog(VoiceActivity.this, filePath);
+            drDialog.setRetakeListener(new DoneRetakeDialog.RetakeListener() {
+                @Override
+                public void onRetake() {
+                    Log.d("speechpro", "retake");
+                }
+            });
+            drDialog.show();
+
+
+
         }
 
 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+            android:gravity="center"
+        >
+
+
+
+    <Button
+            android:text="Retake"
+            android:id="@+id/buttonRetake"
+            android:layout_width="wrap_content"
+            style="@style/BlueButtons"
+            android:layout_margin="5dp"
+            />
+
+    <Button
+            android:text="Listen"
+            android:layout_width="wrap_content"
+            android:id="@+id/buttonListen"
+            style="@style/BlueButtons"
+            android:layout_margin="5dp"
+            />
+
+    <Button
+            android:text="Done"
+            android:layout_width="wrap_content"
+            android:id="@+id/buttonDone"
+            style="@style/BlueButtons"
+            android:layout_margin="5dp"
+            />
+
+
+
+</LinearLayout>

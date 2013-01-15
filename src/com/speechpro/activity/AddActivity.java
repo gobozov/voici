@@ -19,13 +19,14 @@ import com.speechpro.database.DatabaseAdapter;
  * To change this template use File | Settings | File Templates.
  */
 public class AddActivity extends Activity {
-
+    private static final int CODE_RETURN_FROM_VOICE = 5;
     private DatabaseAdapter dbAdapter;
     private Button buttonVoice;
     private EditText login;
     private EditText password;
     private Integer site;
     private Integer editedUser;
+   // private String[] completeRecords;
 
     public void onCreate(Bundle savedInstanceState) {
 
@@ -43,6 +44,7 @@ public class AddActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(AddActivity.this, VoiceActivity.class);
+               // startActivityForResult(intent, CODE_RETURN_FROM_VOICE);
                 startActivity(intent);
             }
         });
@@ -91,6 +93,15 @@ public class AddActivity extends Activity {
 
 
     }
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == CODE_RETURN_FROM_VOICE) {
+//            if (resultCode == RESULT_OK) {
+//                 completeRecords = data.getStringArrayExtra("records");
+//            }
+//        }
+//    }
 
 
     @Override

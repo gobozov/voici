@@ -49,4 +49,8 @@
         <item name="android:textAppearance">@style/BlueButtonsTextAppearance</item>
     </style>
 
+    <style name="RedButtonsBig" parent="GreenButtons">
+        <item name="android:background">@drawable/red_buttons_big</item>
+    </style>
+
 </resources>

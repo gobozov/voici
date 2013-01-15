@@ -25,7 +25,7 @@ public class DoneRetakeDialog extends Dialog {
     private Button buttonRetake;
     private Button buttonListen;
     private String filePath;
-    private RetakeListener retakeListener;
+    private DoneRetakeListener retakeListener;
 
 
     public DoneRetakeDialog(Context context, String filePath) {
@@ -39,14 +39,7 @@ public class DoneRetakeDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.done_retake);
         setTitle("Done or retake record?");
-
-        buttonDone = (Button)findViewById(R.id.buttonDone);
-        buttonDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        });
+        setCanceledOnTouchOutside(false);
 
         buttonListen = (Button)findViewById(R.id.buttonListen);
         buttonListen.setOnClickListener(new View.OnClickListener() {
@@ -87,16 +80,24 @@ public class DoneRetakeDialog extends Dialog {
             @Override
             public void onClick(View view) {
                 retakeListener.onRetake();
-                dismiss();
+            }
+        });
+
+        buttonDone = (Button)findViewById(R.id.buttonDone);
+        buttonDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               retakeListener.onDone();
             }
         });
     }
 
-    public void setRetakeListener(RetakeListener retakeListener) {
+    public void setRetakeListener(DoneRetakeListener retakeListener) {
         this.retakeListener = retakeListener;
     }
 
-    public interface RetakeListener{
+    public interface DoneRetakeListener{
+        public void onDone();
         public void onRetake();
     }
 

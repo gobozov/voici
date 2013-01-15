@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -35,8 +36,13 @@ public class VoiceActivity extends Activity {
     private Button buttonRecord1;
     private Button buttonRecord2;
     private Button buttonRecord3;
+    private Button buttonDone;
 
-    private List<String> completeRecords = new ArrayList<String>();
+    private boolean record1Done;
+    private boolean record2Done;
+    private boolean record3Done;
+
+    private String[] completeRecords = new String[3];
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,12 +54,30 @@ public class VoiceActivity extends Activity {
         if (!tempDir.exists())
             tempDir.mkdir();
 
+        buttonDone = (Button) findViewById(R.id.buttonDone);
+        buttonDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                for (int i = 0; i < completeRecords.length; i++){
+                    if (completeRecords[i] == null){
+                        // todo show notification
+                    }
+                }
+
+                Intent data = new Intent();
+                data.putExtra("records", completeRecords);
+                setResult(RESULT_OK, data);
+
+            }
+        });
+
         buttonRecord1 = (Button) findViewById(R.id.buttonRecord1);
         buttonRecord1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String fileName = tempDir.getAbsolutePath() + "/record1.wav";
-                showRecordDialog(fileName);
+                showRecordDialog(fileName, R.id.buttonRecord1);
             }
         });
 
@@ -62,7 +86,7 @@ public class VoiceActivity extends Activity {
             @Override
             public void onClick(View view) {
                 String fileName = tempDir.getAbsolutePath() + "/record2.wav";
-                showRecordDialog(fileName);
+                showRecordDialog(fileName, R.id.buttonRecord2);
             }
         });
         buttonRecord3 = (Button) findViewById(R.id.buttonRecord3);
@@ -70,14 +94,14 @@ public class VoiceActivity extends Activity {
             @Override
             public void onClick(View view) {
                 String fileName = tempDir.getAbsolutePath() + "/record3.wav";
-                showRecordDialog(fileName);
+                showRecordDialog(fileName, R.id.buttonRecord3);
             }
         });
     }
 
 
 
-    private void showRecordDialog(final String filePath) {
+    private void showRecordDialog(final String filePath, final int buttonId) {
         final AlertDialog alert;
         AlertDialog.Builder builder = new AlertDialog.Builder(VoiceActivity.this)
                 .setTitle("Are you ready?")
@@ -91,13 +115,14 @@ public class VoiceActivity extends Activity {
                         extAudioRecorder.setOutputFile(filePath);
                         extAudioRecorder.prepare();
 
-                        new RecordSpeechTask(VoiceActivity.this, filePath).execute();
+                        new RecordSpeechTask(VoiceActivity.this, filePath, buttonId).execute();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        extAudioRecorder.release();
+                        if (extAudioRecorder !=null)
+                            extAudioRecorder.release();
                         // extAudioRecorder.reset();
                     }
                 })
@@ -112,9 +137,11 @@ public class VoiceActivity extends Activity {
 
         private ProgressDialog dialog;
         private String filePath;
+        private int buttonId;
 
-        public RecordSpeechTask(Context context, String filePath) {
+        public RecordSpeechTask(Context context, String filePath, int buttonId) {
             this.filePath = filePath;
+            this.buttonId = buttonId;
             this.dialog = new ProgressDialog(context);
             this.dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             this.dialog.setCancelable(false);
@@ -149,23 +176,44 @@ public class VoiceActivity extends Activity {
             if (dialog.isShowing())
                 dialog.dismiss();
 
-            DoneRetakeDialog drDialog = new DoneRetakeDialog(VoiceActivity.this, filePath);
+            final DoneRetakeDialog drDialog = new DoneRetakeDialog(VoiceActivity.this, filePath);
 
-            drDialog.setRetakeListener(new DoneRetakeDialog.RetakeListener() {
+            drDialog.setRetakeListener(new DoneRetakeDialog.DoneRetakeListener() {
                 @Override
                 public void onRetake() {
                     Log.d("speechpro", "retake record " + filePath);
-                    showRecordDialog(filePath);
+                    drDialog.dismiss();
+                    showRecordDialog(filePath, buttonId);
+                }
+
+                @Override
+                public void onDone() {
+                    drDialog.dismiss();
+                    Log.d("speechpro", "record complete " + filePath);
+                    ((Button)findViewById(buttonId)).setBackgroundResource(R.drawable.green_buttons);
+                    switch (buttonId){
+                        case R.id.buttonRecord1:
+                            record1Done = true;
+                            completeRecords[0] = filePath;
+                            break;
+                        case R.id.buttonRecord2:
+                            record2Done = true;
+                            completeRecords[1] = filePath;
+                            break;
+                        case R.id.buttonRecord3:
+                            record3Done = true;
+                            completeRecords[2] = filePath;
+                            break;
+                    }
+
+                    if (record1Done && record2Done && record3Done){
+                        buttonDone.setEnabled(true);
+                        buttonDone.setBackgroundResource(R.drawable.green_buttons);
+                    }
                 }
             });
 
-            drDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialogInterface) {
-                    Log.d("speechpro", "record complete " + filePath);
-                     completeRecords.add(filePath);
-                }
-            });
+
             drDialog.show();
 
 

@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import com.speechpro.R;
 
+import java.io.IOException;
+
 /**
  * Created with IntelliJ IDEA.
  * User: gb
@@ -36,7 +38,7 @@ public class DoneRetakeDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.done_retake);
-
+        setTitle("Done or retake record?");
 
         buttonDone = (Button)findViewById(R.id.buttonDone);
         buttonDone.setOnClickListener(new View.OnClickListener() {
@@ -50,16 +52,33 @@ public class DoneRetakeDialog extends Dialog {
         buttonListen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                MediaPlayer mp;
+//                MediaPlayer mp;
                 ///filePath = /mnt/sdcard/.speechpro/record1.wav
-                mp = MediaPlayer.create(context, Uri.parse("file://" + filePath.substring(4, filePath.length())));
-                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        mp.release();
-                    }
-                });
-                mp.start();
+//                mp = MediaPlayer.create(context, Uri.parse("file://" + filePath.substring(4, filePath.length())));
+//                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                    @Override
+//                    public void onCompletion(MediaPlayer mp) {
+//                        mp.release();
+//                    }
+//                });
+//                mp.start();
+
+                try {
+                    final MediaPlayer player = new MediaPlayer();
+                    player.setDataSource(filePath);
+                    player.prepare();
+                    player.start();
+                    player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mediaPlayer) {
+                            player.release();
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
             }
         });
 

@@ -1,5 +1,6 @@
 package com.speechpro.client;
 
+import android.util.Log;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -10,6 +11,7 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
@@ -46,45 +48,24 @@ public class SpeechProClient {
         httpClient = new DefaultHttpClient(cm, params);
     }
 
-    private String execute(String url, String[] filePaths) {
-//        setCredentials(login, password);
-//        HttpGet get = new HttpGet(url.replaceAll("\\s", "+"));
-//        try {
-//            Log.d("MyShows", "Request = " + get.getRequestLine().toString());
-//            HttpResponse response = httpClient.execute(get);
-//            int code = response.getStatusLine().getStatusCode();
-//            if (code == HttpURLConnection.HTTP_OK) {
-//                InputStream stream = response.getEntity().getContent();
-//                if (stream == null)
-//                    Log.d("MyShows", "Response = null");
-//                else
-//                    Log.d("MyShows", "Response = " +  stream.available());
-//                return stream;
-//            } else {
-//                Log.e("MyShows", "Wrong response code " + code + " for request " + get.getRequestLine().toString());
-//                return null;
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-        String resp = "";
+    public String execute(String url, String apiKey, String[] filePaths) {
+        String resp = null;
         try {
             HttpPost httpPost = new HttpPost(url);
             MultipartEntity mpEntity = new MultipartEntity();
+            mpEntity.addPart("apikey", new StringBody(apiKey));
             for (int i = 0; i < filePaths.length; i++) {
-
                 ContentBody cbFile = new FileBody(new File(filePaths[i]), "audio/wav");  // ??? audio/x-wav
                 mpEntity.addPart("file" + i, cbFile);
             }
 
 
             httpPost.setEntity(mpEntity);
-            System.out.println("executing request " + httpPost.getRequestLine());
+            Log.d("speechpro", "executing request " + httpPost.getRequestLine());
 
             HttpResponse response = httpClient.execute(httpPost);
             int code = response.getStatusLine().getStatusCode();
-
+            Log.d("speechpro", "response code = " + code);
             if (code == HttpURLConnection.HTTP_OK) {
 
                 HttpEntity resEntity = response.getEntity();
@@ -96,22 +77,16 @@ public class SpeechProClient {
                 if (resEntity != null) {
                     resEntity.consumeContent();
                 }
-
-            }else {
-
-
-                return null;
-
             }
+
         } catch (IOException e) {
+            Log.d("speechpro", "Error " + e.getMessage());
             e.printStackTrace();
         } finally {
             httpClient.getConnectionManager().shutdown();
         }
 
         return resp;
-
-
     }
 
 

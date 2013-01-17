@@ -13,9 +13,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import com.speechpro.R;
+import com.speechpro.client.SpeechProClient;
 import com.speechpro.record.ExtAudioRecorder;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class VoiceActivity extends Activity {
     private Button buttonRecord2;
     private Button buttonRecord3;
     private Button buttonDone;
+    private Button buttonLast;
 
     private boolean record1Done;
     private boolean record2Done;
@@ -51,8 +54,38 @@ public class VoiceActivity extends Activity {
         if (!APP_DIR.exists())
             APP_DIR.mkdir();
 
-        if (!tempDir.exists())
-            tempDir.mkdir();
+//        if (!tempDir.exists())
+//            tempDir.mkdir();
+
+        buttonLast = (Button) findViewById(R.id.buttonLast);
+        buttonLast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                File[] folders = APP_DIR.listFiles(new FileFilter() {
+                    @Override
+                    public boolean accept(File file) {
+                        if (file.isDirectory())return true;
+                        return false;
+                    }
+                });
+
+                File last = folders[0];
+                for (File f: folders){
+                    if (f.getName().compareTo(last.getName()) > 0){
+                        last = f;
+                        Log.d("speechpro", "last = " + f.getName());
+                    }
+                }
+
+                File lastFiles [] = last.listFiles();
+                for (int i = 0; i < lastFiles.length; i++){
+                    completeRecords[i] = lastFiles[i].getAbsolutePath();
+                }
+                new EnrollTask(VoiceActivity.this).execute(completeRecords);
+
+
+            }
+        });
 
         buttonDone = (Button) findViewById(R.id.buttonDone);
         buttonDone.setOnClickListener(new View.OnClickListener() {
@@ -65,9 +98,13 @@ public class VoiceActivity extends Activity {
                     }
                 }
 
-                Intent data = new Intent();
-                data.putExtra("records", completeRecords);
-                setResult(RESULT_OK, data);
+//                Intent data = new Intent();
+//                data.putExtra("records", completeRecords);
+//                setResult(RESULT_OK, data);
+
+                new EnrollTask(VoiceActivity.this).execute(completeRecords);
+
+
 
             }
         });
@@ -220,9 +257,40 @@ public class VoiceActivity extends Activity {
 
         }
 
-
-
-
     }
+
+
+    private class EnrollTask extends AsyncTask<String[], Void, String>{
+
+        private ProgressDialog dialog;
+        private Context context;
+
+        private EnrollTask(Context context) {
+            this.context = context;
+            this.dialog = new ProgressDialog(context);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage("Upload...");
+            dialog.show();
+
+        }
+
+        @Override
+        protected String doInBackground(String[]... strings) {
+            SpeechProClient client = new SpeechProClient();
+            return client.execute("http://voicekey.speechpro-usa.com/avis/vk_api2/enroll.php", "zab", strings[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+             if (dialog.isShowing())
+                 dialog.dismiss();
+
+            Log.d("speechpro", "Enroll response = " + response);
+        }
+    }
+
 
 }

@@ -48,12 +48,13 @@ public class SpeechProClient {
         httpClient = new DefaultHttpClient(cm, params);
     }
 
-    public String execute(String url, String apiKey, String[] filePaths) {
-        String resp = null;
+    public InputStream executeEnroll(String url, String apiKey, String[] filePaths) {
+        InputStream resp = null;
         try {
             HttpPost httpPost = new HttpPost(url);
             MultipartEntity mpEntity = new MultipartEntity();
             mpEntity.addPart("apikey", new StringBody(apiKey));
+
             for (int i = 0; i < filePaths.length; i++) {
                 ContentBody cbFile = new FileBody(new File(filePaths[i]), "audio/wav");  // ??? audio/x-wav
                 mpEntity.addPart("file" + i, cbFile);
@@ -71,20 +72,23 @@ public class SpeechProClient {
                 HttpEntity resEntity = response.getEntity();
                 System.out.println(response.getStatusLine());
                 if (resEntity != null) {
-                    resp = EntityUtils.toString(resEntity);
-                    System.out.println(resp);
+                    //resp = EntityUtils.toString(resEntity);
+                    //System.out.println(resp);
+                    resp = resEntity.getContent();
+
                 }
-                if (resEntity != null) {
-                    resEntity.consumeContent();
-                }
+//                if (resEntity != null) {
+//                    resEntity.consumeContent();
+//                }
             }
 
         } catch (IOException e) {
             Log.d("speechpro", "Error " + e.getMessage());
             e.printStackTrace();
-        } finally {
-            httpClient.getConnectionManager().shutdown();
         }
+//        } finally {
+//            httpClient.getConnectionManager().shutdown();
+//        }
 
         return resp;
     }

@@ -12,14 +12,16 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 import com.speechpro.R;
 import com.speechpro.client.SpeechProClient;
 import com.speechpro.record.ExtAudioRecorder;
+import com.speechpro.util.ResponseParser;
+import com.speechpro.util.ResponseResult;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
 
 /**
  * Created with IntelliJ IDEA.
@@ -64,21 +66,21 @@ public class VoiceActivity extends Activity {
                 File[] folders = APP_DIR.listFiles(new FileFilter() {
                     @Override
                     public boolean accept(File file) {
-                        if (file.isDirectory())return true;
+                        if (file.isDirectory()) return true;
                         return false;
                     }
                 });
 
                 File last = folders[0];
-                for (File f: folders){
-                    if (f.getName().compareTo(last.getName()) > 0){
+                for (File f : folders) {
+                    if (f.getName().compareTo(last.getName()) > 0) {
                         last = f;
                         Log.d("speechpro", "last = " + f.getName());
                     }
                 }
 
-                File lastFiles [] = last.listFiles();
-                for (int i = 0; i < lastFiles.length; i++){
+                File lastFiles[] = last.listFiles();
+                for (int i = 0; i < lastFiles.length; i++) {
                     completeRecords[i] = lastFiles[i].getAbsolutePath();
                 }
                 new EnrollTask(VoiceActivity.this).execute(completeRecords);
@@ -92,8 +94,8 @@ public class VoiceActivity extends Activity {
             @Override
             public void onClick(View view) {
 
-                for (int i = 0; i < completeRecords.length; i++){
-                    if (completeRecords[i] == null){
+                for (int i = 0; i < completeRecords.length; i++) {
+                    if (completeRecords[i] == null) {
                         // todo show notification
                     }
                 }
@@ -102,8 +104,7 @@ public class VoiceActivity extends Activity {
 //                data.putExtra("records", completeRecords);
 //                setResult(RESULT_OK, data);
 
-                new EnrollTask(VoiceActivity.this).execute(completeRecords);
-
+                //              new EnrollTask(VoiceActivity.this).execute(completeRecords);
 
 
             }
@@ -137,7 +138,6 @@ public class VoiceActivity extends Activity {
     }
 
 
-
     private void showRecordDialog(final String filePath, final int buttonId) {
         final AlertDialog alert;
         AlertDialog.Builder builder = new AlertDialog.Builder(VoiceActivity.this)
@@ -146,7 +146,7 @@ public class VoiceActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface d, int which) {
 
-                      //  String fileName = tempDir.getAbsolutePath() + "/record" + buttonId + ".wav";
+                        //  String fileName = tempDir.getAbsolutePath() + "/record" + buttonId + ".wav";
                         System.out.println("filePath = " + filePath);
                         extAudioRecorder = ExtAudioRecorder.getInstanse(false);
                         extAudioRecorder.setOutputFile(filePath);
@@ -158,7 +158,7 @@ public class VoiceActivity extends Activity {
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if (extAudioRecorder !=null)
+                        if (extAudioRecorder != null)
                             extAudioRecorder.release();
                         // extAudioRecorder.reset();
                     }
@@ -169,8 +169,7 @@ public class VoiceActivity extends Activity {
     }
 
 
-
-    public class RecordSpeechTask extends AsyncTask<Object, Integer, Boolean>{
+    public class RecordSpeechTask extends AsyncTask<Object, Integer, Boolean> {
 
         private ProgressDialog dialog;
         private String filePath;
@@ -197,8 +196,8 @@ public class VoiceActivity extends Activity {
             extAudioRecorder.start();
             Log.d("speechpro", "start record");
             long startTime = System.currentTimeMillis();
-            while (System.currentTimeMillis() - startTime < 5000){
-                dialog.setProgress((int)(System.currentTimeMillis() - startTime));
+            while (System.currentTimeMillis() - startTime < 5000) {
+                dialog.setProgress((int) (System.currentTimeMillis() - startTime));
             }
             extAudioRecorder.stop();
             extAudioRecorder.release();
@@ -227,8 +226,8 @@ public class VoiceActivity extends Activity {
                 public void onDone() {
                     drDialog.dismiss();
                     Log.d("speechpro", "record complete " + filePath);
-                    ((Button)findViewById(buttonId)).setBackgroundResource(R.drawable.green_buttons);
-                    switch (buttonId){
+                    ((Button) findViewById(buttonId)).setBackgroundResource(R.drawable.green_buttons);
+                    switch (buttonId) {
                         case R.id.buttonRecord1:
                             record1Done = true;
                             completeRecords[0] = filePath;
@@ -243,7 +242,7 @@ public class VoiceActivity extends Activity {
                             break;
                     }
 
-                    if (record1Done && record2Done && record3Done){
+                    if (record1Done && record2Done && record3Done) {
                         buttonDone.setEnabled(true);
                         buttonDone.setBackgroundResource(R.drawable.green_buttons);
                     }
@@ -254,13 +253,12 @@ public class VoiceActivity extends Activity {
             drDialog.show();
 
 
-
         }
 
     }
 
 
-    private class EnrollTask extends AsyncTask<String[], Void, String>{
+    private class EnrollTask extends AsyncTask<String[], Void, ResponseResult> {
 
         private ProgressDialog dialog;
         private Context context;
@@ -273,22 +271,35 @@ public class VoiceActivity extends Activity {
         @Override
         protected void onPreExecute() {
             dialog.setMessage("Upload...");
+            dialog.setCanceledOnTouchOutside(false);
             dialog.show();
 
         }
 
         @Override
-        protected String doInBackground(String[]... strings) {
+        protected ResponseResult doInBackground(String[]... strings) {
             SpeechProClient client = new SpeechProClient();
-            return client.execute("http://voicekey.speechpro-usa.com/avis/vk_api2/enroll.php", "zab", strings[0]);
+            InputStream stream = client.executeEnroll("http://voicekey.speechpro-usa.com/avis/vk_api2/enroll.php", "zab", strings[0]);
+            ResponseParser parser = new ResponseParser();
+            return parser.getEnrollResult(stream);
+
         }
 
         @Override
-        protected void onPostExecute(String response) {
-             if (dialog.isShowing())
-                 dialog.dismiss();
+        protected void onPostExecute(ResponseResult result) {
+            if (dialog.isShowing())
+                dialog.dismiss();
 
-            Log.d("speechpro", "Enroll response = " + response);
+            if (result != null) {
+                Intent data = new Intent();
+                data.putExtra("result", result);
+                setResult(RESULT_OK, data);
+                finish();
+            }else {
+                Toast.makeText(context, "Something wrong... ", Toast.LENGTH_LONG).show();
+            }
+
+            //Log.d("speechpro", "Enroll response = " + response);
         }
     }
 

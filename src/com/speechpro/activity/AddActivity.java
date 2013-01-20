@@ -3,6 +3,7 @@ package com.speechpro.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,6 +11,7 @@ import android.widget.Toast;
 import com.speechpro.R;
 import com.speechpro.data.User;
 import com.speechpro.database.DatabaseAdapter;
+import com.speechpro.util.ResponseResult;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,7 +28,7 @@ public class AddActivity extends Activity {
     private EditText password;
     private Integer site;
     private Integer editedUser;
-   // private String[] completeRecords;
+    private ResponseResult voiceResult;
 
     public void onCreate(Bundle savedInstanceState) {
 
@@ -44,8 +46,8 @@ public class AddActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(AddActivity.this, VoiceActivity.class);
-               // startActivityForResult(intent, CODE_RETURN_FROM_VOICE);
-                startActivity(intent);
+                startActivityForResult(intent, CODE_RETURN_FROM_VOICE);
+                //startActivity(intent);
             }
         });
 
@@ -66,6 +68,8 @@ public class AddActivity extends Activity {
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 if (isValidField(login) && isValidField(password)) {
                     User user = new User(login.getText().toString(), password.getText().toString());
                     user.setKey("1234567890");
@@ -94,14 +98,16 @@ public class AddActivity extends Activity {
 
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == CODE_RETURN_FROM_VOICE) {
-//            if (resultCode == RESULT_OK) {
-//                 completeRecords = data.getStringArrayExtra("records");
-//            }
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CODE_RETURN_FROM_VOICE) {
+            if (resultCode == RESULT_OK) {
+
+                voiceResult = data.getParcelableExtra("result");
+                Log.d("speechpro", "result 2 = " + voiceResult);
+            }
+        }
+    }
 
 
     @Override

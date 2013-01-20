@@ -34,4 +34,23 @@ public class Utils {
         }
     }
 
+    public static boolean isValidAttributes(String status, String cardId){
+        if (isEmptyString(status)) return false;
+        if (isEmptyString(cardId)) return false;
+
+        if (!status.equals(ResponseResult.Status.ERROR.getName()) ||
+                !status.equals(ResponseResult.Status.OK.getName()) ||
+                !status.equals(ResponseResult.Status.INCONSISTENT_COMPOSITE.getName()))
+            return false;
+
+        return true;
+    }
+
+    public static boolean isEmptyString(String s){
+        if (s == null || s.trim().length() == 0)
+            return true;
+        return false;
+    }
+
+
 }

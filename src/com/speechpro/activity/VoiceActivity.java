@@ -18,6 +18,7 @@ import com.speechpro.client.SpeechProClient;
 import com.speechpro.record.ExtAudioRecorder;
 import com.speechpro.util.ResponseParser;
 import com.speechpro.util.ResponseResult;
+import com.speechpro.util.Utils;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -32,9 +33,11 @@ import java.io.InputStream;
  */
 public class VoiceActivity extends Activity {
 
-    public static final File SD_DIR = Environment.getExternalStorageDirectory();
-    public static final File APP_DIR = new File(SD_DIR + "/.speechpro");
-    private File tempDir = new File(APP_DIR, String.valueOf(System.currentTimeMillis()));
+    //public static final File SD_DIR = Environment.getExternalStorageDirectory();
+    //public static final File APP_DIR = new File(SD_DIR + "/.speechpro");
+    //private File tempDir = new File(APP_DIR, String.valueOf(System.currentTimeMillis()));
+
+
 
     private ExtAudioRecorder extAudioRecorder = null;
     private Button buttonRecord1;
@@ -47,23 +50,24 @@ public class VoiceActivity extends Activity {
     private boolean record2Done;
     private boolean record3Done;
 
+    private File tempDir;
+
     private String[] completeRecords = new String[3];
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.voice);
 
-        if (!APP_DIR.exists())
-            APP_DIR.mkdir();
-
+        tempDir = new File(Utils.getAppDir(this), String.valueOf(System.currentTimeMillis()));
 //        if (!tempDir.exists())
 //            tempDir.mkdir();
+
 
         buttonLast = (Button) findViewById(R.id.buttonLast);
         buttonLast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                File[] folders = APP_DIR.listFiles(new FileFilter() {
+                File[] folders = Utils.getAppDir(VoiceActivity.this).listFiles(new FileFilter() {
                     @Override
                     public boolean accept(File file) {
                         if (file.isDirectory()) return true;

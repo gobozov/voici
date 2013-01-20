@@ -1,5 +1,9 @@
 package com.speechpro.data;
 
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * Created with IntelliJ IDEA.
  * User: gb
@@ -7,7 +11,7 @@ package com.speechpro.data;
  * Time: 0:47
  * To change this template use File | Settings | File Templates.
  */
-public class User {
+public class User implements Serializable{
 
     private Integer id;
     private String name;
@@ -58,4 +62,7 @@ public class User {
     public String toString() {
         return name;
     }
+
+
+
 }

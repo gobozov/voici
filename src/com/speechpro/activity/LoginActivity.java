@@ -82,7 +82,7 @@ public class LoginActivity extends Activity {
                     User user = userAdapter.getItem(selectedPosition);
                     Intent intent = new Intent(LoginActivity.this, AddActivity.class);
                     intent.putExtra("site", site);
-                    intent.putExtra("user", user.getId());
+                    intent.putExtra("user", user);
                     startActivityForResult(intent,CODE_EDIT_USER);
                 }else{
                     Toast.makeText(LoginActivity.this, "Select user to edit", Toast.LENGTH_SHORT).show();

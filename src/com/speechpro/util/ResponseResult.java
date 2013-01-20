@@ -13,7 +13,7 @@ import java.io.Serializable;
  * Time: 23:49
  * To change this template use File | Settings | File Templates.
  */
-public class ResponseResult implements Parcelable {
+public class ResponseResult implements Serializable {
 
 
     private String key;
@@ -52,19 +52,19 @@ public class ResponseResult implements Parcelable {
                 '}';
     }
 
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        Log.d("speechpro", "writeToParcel");
-        parcel.writeString(key);
-        parcel.writeSerializable(status);
-
-    }
+//
+//    @Override
+//    public int describeContents() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public void writeToParcel(Parcel parcel, int i) {
+//        Log.d("speechpro", "writeToParcel");
+//        parcel.writeString(key);
+//        parcel.writeSerializable(status);
+//
+//    }
 
     public enum Status implements Serializable{
 

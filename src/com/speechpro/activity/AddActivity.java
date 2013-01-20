@@ -12,6 +12,7 @@ import com.speechpro.R;
 import com.speechpro.data.User;
 import com.speechpro.database.DatabaseAdapter;
 import com.speechpro.util.ResponseResult;
+import com.speechpro.util.Utils;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,7 +28,7 @@ public class AddActivity extends Activity {
     private EditText login;
     private EditText password;
     private Integer site;
-    private Integer editedUser;
+    private User editedUser;
     private ResponseResult voiceResult;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class AddActivity extends Activity {
         setContentView(R.layout.add);
 
         site = getIntent().getIntExtra("site", DatabaseAdapter.VK);
-        editedUser = getIntent().getIntExtra("user", -1);
+        editedUser = getIntent().getSerializableExtra("user") == null ? null : (User) getIntent().getSerializableExtra("user");
 
         dbAdapter = new DatabaseAdapter(this);
         dbAdapter.open();
@@ -57,8 +58,8 @@ public class AddActivity extends Activity {
 
 
         // is edit action
-        if (editedUser != null && editedUser != -1) {
-            User user = dbAdapter.getUserById(editedUser);
+        if (editedUser != null) {
+            User user = dbAdapter.getUserById(editedUser.getId());
             login.setText(user.getName());
             password.setText(user.getPassword());
         }
@@ -72,25 +73,24 @@ public class AddActivity extends Activity {
 
                 if (isValidField(login) && isValidField(password)) {
                     User user = new User(login.getText().toString(), password.getText().toString());
-                    user.setKey("1234567890");
 
-                    boolean result;
 
                     //edit existing user
-                    if (editedUser != null && editedUser != -1) {
-                        result = dbAdapter.updateUser(editedUser, user);
-                        setResult(RESULT_OK);
-
-                    } else {
+                    if (editedUser != null ) {
+                        user.setKey(voiceResult == null ? editedUser.getKey() : voiceResult.getKey());
+                        if (Utils.isEmptyString(user.getKey())) Toast.makeText(AddActivity.this, "User do not have voice password, you can set up it later", Toast.LENGTH_SHORT).show();
+                        dbAdapter.updateUser(editedUser.getId(), user);
                         // create new user
-                        result = dbAdapter.addUser(user, site);
-                        setResult(RESULT_OK);
+                    } else {
+                        user.setKey(voiceResult == null ? "" : voiceResult.getKey());
+                        if (Utils.isEmptyString(user.getKey())) Toast.makeText(AddActivity.this, "User do not have voice password, you can set up it later", Toast.LENGTH_SHORT).show();
+                        dbAdapter.addUser(user, site);
                     }
 
-                    if (result)
-                        finish();
-                    else
-                        Toast.makeText(AddActivity.this, "Can't add or edit user, something wrong :(", Toast.LENGTH_SHORT).show();
+
+                    setResult(RESULT_OK);
+                    finish();
+
                 }
             }
         });
@@ -102,8 +102,7 @@ public class AddActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CODE_RETURN_FROM_VOICE) {
             if (resultCode == RESULT_OK) {
-
-                voiceResult = data.getParcelableExtra("result");
+                voiceResult = (ResponseResult) data.getSerializableExtra("result");
                 Log.d("speechpro", "result 2 = " + voiceResult);
             }
         }
@@ -130,5 +129,7 @@ public class AddActivity extends Activity {
         }
         return true;
     }
+
+
 
 }

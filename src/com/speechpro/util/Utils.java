@@ -43,7 +43,7 @@ public class Utils {
             File SD_DIR = Environment.getExternalStorageDirectory();
             appDir = new File(SD_DIR + "/.speechpro");
         } else {
-            appDir = context.getCacheDir();
+            appDir = new File(context.getFilesDir() + "/sounds");
         }
         if (!appDir.exists())
             appDir.mkdir();

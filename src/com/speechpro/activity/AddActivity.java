@@ -76,14 +76,16 @@ public class AddActivity extends Activity {
 
 
                     //edit existing user
-                    if (editedUser != null ) {
+                    if (editedUser != null) {
                         user.setKey(voiceResult == null ? editedUser.getKey() : voiceResult.getKey());
-                        if (Utils.isEmptyString(user.getKey())) Toast.makeText(AddActivity.this, "User do not have voice password, you can set up it later", Toast.LENGTH_SHORT).show();
+                        if (Utils.isEmptyString(user.getKey()))
+                            Toast.makeText(AddActivity.this, "User do not have voice password, you can set up it later", Toast.LENGTH_SHORT).show();
                         dbAdapter.updateUser(editedUser.getId(), user);
                         // create new user
                     } else {
                         user.setKey(voiceResult == null ? "" : voiceResult.getKey());
-                        if (Utils.isEmptyString(user.getKey())) Toast.makeText(AddActivity.this, "User do not have voice password, you can set up it later", Toast.LENGTH_SHORT).show();
+                        if (Utils.isEmptyString(user.getKey()))
+                            Toast.makeText(AddActivity.this, "User do not have voice password, you can set up it later", Toast.LENGTH_SHORT).show();
                         dbAdapter.addUser(user, site);
                     }
 
@@ -117,7 +119,9 @@ public class AddActivity extends Activity {
 
     @Override
     protected void onPause() {
-        dbAdapter.close();
+        if (dbAdapter != null)
+            dbAdapter.close();
+
         super.onPause();
     }
 
@@ -129,7 +133,6 @@ public class AddActivity extends Activity {
         }
         return true;
     }
-
 
 
 }

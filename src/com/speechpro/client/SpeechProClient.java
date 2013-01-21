@@ -38,8 +38,8 @@ public class SpeechProClient {
 
     public SpeechProClient() {
         HttpParams params = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(params, 30000);
-        HttpConnectionParams.setSoTimeout(params, 30000);
+        HttpConnectionParams.setConnectionTimeout(params, 60000);
+        HttpConnectionParams.setSoTimeout(params, 60000);
 
         SchemeRegistry schemeRegistry = new SchemeRegistry();
         schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
@@ -83,7 +83,7 @@ public class SpeechProClient {
             }
 
         } catch (IOException e) {
-            Log.d("speechpro", "Error " + e.getMessage());
+            Log.d("speechpro", "Enroll Error " + e.getMessage());
             e.printStackTrace();
         }
 //        } finally {
@@ -93,5 +93,36 @@ public class SpeechProClient {
         return resp;
     }
 
+    public InputStream executeEnrollVerify(String url, String apiKey, String id, String filePath) {
+        InputStream resp = null;
+        try {
+            HttpPost httpPost = new HttpPost(url);
+            MultipartEntity mpEntity = new MultipartEntity();
+            mpEntity.addPart("apikey", new StringBody(apiKey));
+            mpEntity.addPart("ID", new StringBody(id));
+            mpEntity.addPart("file1" , new FileBody(new File(filePath), "audio/wav"));
+
+            httpPost.setEntity(mpEntity);
+            Log.d("speechpro", "executing request " + httpPost.getRequestLine());
+
+            HttpResponse response = httpClient.execute(httpPost);
+            int code = response.getStatusLine().getStatusCode();
+            Log.d("speechpro", "response code = " + code);
+            if (code == HttpURLConnection.HTTP_OK) {
+
+                HttpEntity resEntity = response.getEntity();
+                System.out.println(response.getStatusLine());
+                if (resEntity != null) {
+                    resp = resEntity.getContent();
+
+                }
+            }
+
+        } catch (IOException e) {
+            Log.d("speechpro", "Enroll Verify Error " + e.getMessage());
+            e.printStackTrace();
+        }
+        return resp;
+    }
 
 }

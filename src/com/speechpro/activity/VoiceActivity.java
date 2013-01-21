@@ -38,7 +38,6 @@ public class VoiceActivity extends Activity {
     //private File tempDir = new File(APP_DIR, String.valueOf(System.currentTimeMillis()));
 
 
-
     private ExtAudioRecorder extAudioRecorder = null;
     private Button buttonRecord1;
     private Button buttonRecord2;
@@ -108,7 +107,7 @@ public class VoiceActivity extends Activity {
 //                data.putExtra("records", completeRecords);
 //                setResult(RESULT_OK, data);
 
-                //              new EnrollTask(VoiceActivity.this).execute(completeRecords);
+                new EnrollTask(VoiceActivity.this).execute(completeRecords);
 
 
             }
@@ -118,6 +117,7 @@ public class VoiceActivity extends Activity {
         buttonRecord1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!tempDir.exists()) tempDir.mkdir();
                 String fileName = tempDir.getAbsolutePath() + "/record1.wav";
                 showRecordDialog(fileName, R.id.buttonRecord1);
             }
@@ -127,6 +127,7 @@ public class VoiceActivity extends Activity {
         buttonRecord2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!tempDir.exists()) tempDir.mkdir();
                 String fileName = tempDir.getAbsolutePath() + "/record2.wav";
                 showRecordDialog(fileName, R.id.buttonRecord2);
             }
@@ -135,6 +136,7 @@ public class VoiceActivity extends Activity {
         buttonRecord3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (!tempDir.exists()) tempDir.mkdir();
                 String fileName = tempDir.getAbsolutePath() + "/record3.wav";
                 showRecordDialog(fileName, R.id.buttonRecord3);
             }
@@ -299,7 +301,7 @@ public class VoiceActivity extends Activity {
                 data.putExtra("result", result);
                 setResult(RESULT_OK, data);
                 finish();
-            }else {
+            } else {
                 Toast.makeText(context, "Something wrong... ", Toast.LENGTH_LONG).show();
             }
 

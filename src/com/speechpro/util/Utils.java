@@ -1,9 +1,12 @@
 package com.speechpro.util;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import com.speechpro.record.ExtAudioRecorder;
 
 import java.io.File;
 
@@ -66,6 +69,21 @@ public class Utils {
         if (s == null || s.trim().length() == 0)
             return true;
         return false;
+    }
+
+    public static void showMessageDialog(Context context, final String title, final String message) {
+        final AlertDialog alert;
+        AlertDialog.Builder builder = new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface d, int which) {
+
+                    }
+                })
+                .setMessage(message);
+        alert = builder.create();
+        alert.show();
     }
 
 

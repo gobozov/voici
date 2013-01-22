@@ -49,9 +49,4 @@
             android:enabled="false"
             />
 
-    <Button
-            android:text="Get Last"
-            android:id="@+id/buttonLast"
-            style="@style/BlueButtons"
-            />
 </LinearLayout>

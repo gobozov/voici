@@ -231,6 +231,13 @@ public class LoginActivity extends Activity {
 
         @Override
         protected void onPreExecute() {
+
+            if (!Utils.isInternetAvailable(context)){
+                Utils.showMessageDialog(context, "Internet not available.", "You don't have an internet connection, check it and try again.");
+                cancel(true);
+                return;
+            }
+
             dialog.setMessage("Upload...");
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
@@ -240,7 +247,7 @@ public class LoginActivity extends Activity {
         @Override
         protected ResponseResult doInBackground(String... strings) {
             SpeechProClient client = new SpeechProClient();
-            InputStream stream = client.executeEnrollVerify("http://voicekey.speechpro-usa.com/avis/vk_api2/enroll_verify.php", "zab", strings[0], strings[1]);
+            InputStream stream = client.executeEnrollVerify("http://voicekey.speechpro-usa.com/avis/vk_api2/enroll_verify.php", "zabsss", strings[0], strings[1]);
             ResponseParser parser = new ResponseParser();
             return parser.getEnrollResult(stream);
 
@@ -253,7 +260,7 @@ public class LoginActivity extends Activity {
 
             if (result != null) {
 
-                if (result.getStatus().equals(ResponseResult.Status.valueOf("OK"))){
+                if (result.getStatus().equals(ResponseResult.Status.OK)){
                     String s = "";
                     if (site == DatabaseAdapter.VK) s = "Vkontakte";
                     if (site == DatabaseAdapter.GMAIL) s = "Gmail";
@@ -265,6 +272,8 @@ public class LoginActivity extends Activity {
                     intent.putExtra("user", userAdapter.getItem(selectedPosition));
                     startActivity(intent);
 
+                } else {
+                    Utils.showMessageDialog(LoginActivity.this, "Error", result.getError());
                 }
 
 

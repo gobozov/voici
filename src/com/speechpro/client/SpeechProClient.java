@@ -19,6 +19,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,6 +81,8 @@ public class SpeechProClient {
 //                if (resEntity != null) {
 //                    resEntity.consumeContent();
 //                }
+            }else{
+                 resp = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"UTF-8\"?><EnrollVerify Status=\"ERROR\">" + EntityUtils.toString(response.getEntity())  + "</EnrollVerify>").getBytes("UTF-8"));
             }
 
         } catch (IOException e) {
@@ -116,6 +119,8 @@ public class SpeechProClient {
                     resp = resEntity.getContent();
 
                 }
+            }else{
+                resp = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"UTF-8\"?><EnrollVerify Status=\"ERROR\">" + EntityUtils.toString(response.getEntity())  + "</EnrollVerify>").getBytes("UTF-8"));
             }
 
         } catch (IOException e) {

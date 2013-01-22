@@ -57,8 +57,8 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:id="@+id/listUsers"
-            android:background="@color/darkest_orange"
             android:layout_above="@id/buttonAdd"
+            android:background="@color/gray"
             />
 
 

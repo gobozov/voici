@@ -43,7 +43,7 @@ public class VoiceActivity extends Activity {
     private Button buttonRecord2;
     private Button buttonRecord3;
     private Button buttonDone;
-    private Button buttonLast;
+   // private Button buttonLast;
 
     private boolean record1Done;
     private boolean record2Done;
@@ -62,35 +62,35 @@ public class VoiceActivity extends Activity {
 //            tempDir.mkdir();
 
 
-        buttonLast = (Button) findViewById(R.id.buttonLast);
-        buttonLast.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                File[] folders = Utils.getAppDir(VoiceActivity.this).listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        if (file.isDirectory()) return true;
-                        return false;
-                    }
-                });
-
-                File last = folders[0];
-                for (File f : folders) {
-                    if (f.getName().compareTo(last.getName()) > 0) {
-                        last = f;
-                        Log.d("speechpro", "last = " + f.getName());
-                    }
-                }
-
-                File lastFiles[] = last.listFiles();
-                for (int i = 0; i < lastFiles.length; i++) {
-                    completeRecords[i] = lastFiles[i].getAbsolutePath();
-                }
-                new EnrollTask(VoiceActivity.this).execute(completeRecords);
-
-
-            }
-        });
+//        buttonLast = (Button) findViewById(R.id.buttonLast);
+//        buttonLast.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                File[] folders = Utils.getAppDir(VoiceActivity.this).listFiles(new FileFilter() {
+//                    @Override
+//                    public boolean accept(File file) {
+//                        if (file.isDirectory()) return true;
+//                        return false;
+//                    }
+//                });
+//
+//                File last = folders[0];
+//                for (File f : folders) {
+//                    if (f.getName().compareTo(last.getName()) > 0) {
+//                        last = f;
+//                        Log.d("speechpro", "last = " + f.getName());
+//                    }
+//                }
+//
+//                File lastFiles[] = last.listFiles();
+//                for (int i = 0; i < lastFiles.length; i++) {
+//                    completeRecords[i] = lastFiles[i].getAbsolutePath();
+//                }
+//                new EnrollTask(VoiceActivity.this).execute(completeRecords);
+//
+//
+//            }
+//        });
 
         buttonDone = (Button) findViewById(R.id.buttonDone);
         buttonDone.setOnClickListener(new View.OnClickListener() {
@@ -276,6 +276,13 @@ public class VoiceActivity extends Activity {
 
         @Override
         protected void onPreExecute() {
+
+            if (!Utils.isInternetAvailable(context)){
+                Utils.showMessageDialog(context, "Internet not available.", "You don't have an internet connection, check it and try again.");
+                cancel(true);
+                return;
+            }
+
             dialog.setMessage("Upload...");
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();

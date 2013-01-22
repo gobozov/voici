@@ -105,7 +105,9 @@ public class AddActivity extends Activity {
         if (requestCode == CODE_RETURN_FROM_VOICE) {
             if (resultCode == RESULT_OK) {
                 voiceResult = (ResponseResult) data.getSerializableExtra("result");
-                Log.d("speechpro", "result 2 = " + voiceResult);
+                if (voiceResult.getStatus().equals(ResponseResult.Status.ERROR))
+                   Utils.showMessageDialog(this, "Error", voiceResult.getError());
+
             }
         }
     }

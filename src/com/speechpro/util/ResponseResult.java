@@ -18,6 +18,7 @@ public class ResponseResult implements Serializable {
 
     private String key;
     private Status status;
+    private String error;
 
     public ResponseResult() {
     }
@@ -27,6 +28,23 @@ public class ResponseResult implements Serializable {
         this.key = key;
     }
 
+    public ResponseResult(String error, Status status) {
+        this.status = status;
+        this.error = error;
+    }
+
+    public ResponseResult(String error) {
+        this.error = error;
+    }
+
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
 
     public String getKey() {
         return key;
@@ -49,10 +67,12 @@ public class ResponseResult implements Serializable {
         return "ResponseResult{" +
                 "key='" + key + '\'' +
                 ", status=" + status +
+                ", error='" + error + '\'' +
                 '}';
     }
 
-//
+
+    //
 //    @Override
 //    public int describeContents() {
 //        return 0;

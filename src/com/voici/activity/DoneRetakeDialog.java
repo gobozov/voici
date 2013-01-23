@@ -1,13 +1,12 @@
-package com.speechpro.activity;
+package com.voici.activity;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import com.speechpro.R;
+import com.voici.R;
 
 import java.io.IOException;
 
@@ -46,7 +45,7 @@ public class DoneRetakeDialog extends Dialog {
             @Override
             public void onClick(View view) {
 //                MediaPlayer mp;
-                ///filePath = /mnt/sdcard/.speechpro/record1.wav
+                ///filePath = /mnt/sdcard/.voici/record1.wav
 //                mp = MediaPlayer.create(context, Uri.parse("file://" + filePath.substring(4, filePath.length())));
 //                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 //                    @Override

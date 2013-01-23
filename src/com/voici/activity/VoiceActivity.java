@@ -1,4 +1,4 @@
-package com.speechpro.activity;
+package com.voici.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,20 +8,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import com.speechpro.R;
-import com.speechpro.client.SpeechProClient;
-import com.speechpro.record.ExtAudioRecorder;
-import com.speechpro.util.ResponseParser;
-import com.speechpro.util.ResponseResult;
-import com.speechpro.util.Utils;
+import com.voici.R;
+import com.voici.client.SpeechProClient;
+import com.voici.record.ExtAudioRecorder;
+import com.voici.util.ResponseParser;
+import com.voici.util.ResponseResult;
+import com.voici.util.Utils;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.InputStream;
 
 /**
@@ -34,7 +32,7 @@ import java.io.InputStream;
 public class VoiceActivity extends Activity {
 
     //public static final File SD_DIR = Environment.getExternalStorageDirectory();
-    //public static final File APP_DIR = new File(SD_DIR + "/.speechpro");
+    //public static final File APP_DIR = new File(SD_DIR + "/.voici");
     //private File tempDir = new File(APP_DIR, String.valueOf(System.currentTimeMillis()));
 
 
@@ -78,7 +76,7 @@ public class VoiceActivity extends Activity {
 //                for (File f : folders) {
 //                    if (f.getName().compareTo(last.getName()) > 0) {
 //                        last = f;
-//                        Log.d("speechpro", "last = " + f.getName());
+//                        Log.d("voici", "last = " + f.getName());
 //                    }
 //                }
 //
@@ -200,7 +198,7 @@ public class VoiceActivity extends Activity {
         @Override
         protected Boolean doInBackground(Object... objects) {
             extAudioRecorder.start();
-            Log.d("speechpro", "start record");
+            Log.d("voici", "start record");
             long startTime = System.currentTimeMillis();
             while (System.currentTimeMillis() - startTime < 5000) {
                 dialog.setProgress((int) (System.currentTimeMillis() - startTime));
@@ -208,7 +206,7 @@ public class VoiceActivity extends Activity {
             extAudioRecorder.stop();
             extAudioRecorder.release();
             extAudioRecorder.reset();
-            Log.d("speechpro", "stop record");
+            Log.d("voici", "stop record");
             return true;
 
         }
@@ -223,7 +221,7 @@ public class VoiceActivity extends Activity {
             drDialog.setRetakeListener(new DoneRetakeDialog.DoneRetakeListener() {
                 @Override
                 public void onRetake() {
-                    Log.d("speechpro", "retake record " + filePath);
+                    Log.d("voici", "retake record " + filePath);
                     drDialog.dismiss();
                     showRecordDialog(filePath, buttonId);
                 }
@@ -231,7 +229,7 @@ public class VoiceActivity extends Activity {
                 @Override
                 public void onDone() {
                     drDialog.dismiss();
-                    Log.d("speechpro", "record complete " + filePath);
+                    Log.d("voici", "record complete " + filePath);
                     ((Button) findViewById(buttonId)).setBackgroundResource(R.drawable.green_buttons);
                     switch (buttonId) {
                         case R.id.buttonRecord1:
@@ -312,7 +310,7 @@ public class VoiceActivity extends Activity {
                 Toast.makeText(context, "Something wrong... ", Toast.LENGTH_LONG).show();
             }
 
-            //Log.d("speechpro", "Enroll response = " + response);
+            //Log.d("voici", "Enroll response = " + response);
         }
     }
 

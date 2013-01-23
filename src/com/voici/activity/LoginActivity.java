@@ -1,4 +1,4 @@
-package com.speechpro.activity;
+package com.voici.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -6,21 +6,19 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.*;
-import com.speechpro.R;
-import com.speechpro.client.SpeechProClient;
-import com.speechpro.data.User;
-import com.speechpro.database.DatabaseAdapter;
-import com.speechpro.record.ExtAudioRecorder;
-import com.speechpro.util.ResponseParser;
-import com.speechpro.util.ResponseResult;
-import com.speechpro.util.Utils;
+import com.voici.R;
+import com.voici.client.SpeechProClient;
+import com.voici.data.User;
+import com.voici.database.DatabaseAdapter;
+import com.voici.record.ExtAudioRecorder;
+import com.voici.util.ResponseParser;
+import com.voici.util.ResponseResult;
+import com.voici.util.Utils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -187,7 +185,7 @@ public class LoginActivity extends Activity {
         @Override
         protected Boolean doInBackground(Object... objects) {
             extAudioRecorder.start();
-            Log.d("speechpro", "start record");
+            Log.d("voici", "start record");
             long startTime = System.currentTimeMillis();
             while (System.currentTimeMillis() - startTime < 5000) {
                 dialog.setProgress((int) (System.currentTimeMillis() - startTime));
@@ -195,7 +193,7 @@ public class LoginActivity extends Activity {
             extAudioRecorder.stop();
             extAudioRecorder.release();
             extAudioRecorder.reset();
-            Log.d("speechpro", "stop record");
+            Log.d("voici", "stop record");
             return true;
 
         }
@@ -265,7 +263,7 @@ public class LoginActivity extends Activity {
                     if (site == DatabaseAdapter.VK) s = "Vkontakte";
                     if (site == DatabaseAdapter.GMAIL) s = "Gmail";
                     if (site == DatabaseAdapter.FACEBOOK) s = "Facebook";
-                    Log.d("speechpro", "try to login to " + s);
+                    Log.d("voici", "try to login to " + s);
 
                     Intent intent = new Intent(LoginActivity.this, WebActivity.class);
                     intent.putExtra("site", site);
@@ -282,7 +280,7 @@ public class LoginActivity extends Activity {
                 Toast.makeText(context, "Something wrong... ", Toast.LENGTH_LONG).show();
             }
 
-            //Log.d("speechpro", "Enroll response = " + response);
+            //Log.d("voici", "Enroll response = " + response);
         }
     }
 

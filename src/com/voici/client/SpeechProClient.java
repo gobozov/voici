@@ -1,4 +1,4 @@
-package com.speechpro.client;
+package com.voici.client;
 
 import android.util.Log;
 import org.apache.http.HttpEntity;
@@ -63,11 +63,11 @@ public class SpeechProClient {
 
 
             httpPost.setEntity(mpEntity);
-            Log.d("speechpro", "executing request " + httpPost.getRequestLine());
+            Log.d("voici", "executing request " + httpPost.getRequestLine());
 
             HttpResponse response = httpClient.execute(httpPost);
             int code = response.getStatusLine().getStatusCode();
-            Log.d("speechpro", "response code = " + code);
+            Log.d("voici", "response code = " + code);
             if (code == HttpURLConnection.HTTP_OK) {
 
                 HttpEntity resEntity = response.getEntity();
@@ -86,7 +86,7 @@ public class SpeechProClient {
             }
 
         } catch (IOException e) {
-            Log.d("speechpro", "Enroll Error " + e.getMessage());
+            Log.d("voici", "Enroll Error " + e.getMessage());
             e.printStackTrace();
         }
 //        } finally {
@@ -106,11 +106,11 @@ public class SpeechProClient {
             mpEntity.addPart("file1" , new FileBody(new File(filePath), "audio/wav"));
 
             httpPost.setEntity(mpEntity);
-            Log.d("speechpro", "executing request " + httpPost.getRequestLine());
+            Log.d("voici", "executing request " + httpPost.getRequestLine());
 
             HttpResponse response = httpClient.execute(httpPost);
             int code = response.getStatusLine().getStatusCode();
-            Log.d("speechpro", "response code = " + code);
+            Log.d("voici", "response code = " + code);
             if (code == HttpURLConnection.HTTP_OK) {
 
                 HttpEntity resEntity = response.getEntity();
@@ -124,7 +124,7 @@ public class SpeechProClient {
             }
 
         } catch (IOException e) {
-            Log.d("speechpro", "Enroll Verify Error " + e.getMessage());
+            Log.d("voici", "Enroll Verify Error " + e.getMessage());
             e.printStackTrace();
         }
         return resp;

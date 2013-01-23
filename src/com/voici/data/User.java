@@ -1,6 +1,4 @@
-package com.speechpro.data;
-
-import android.os.Parcelable;
+package com.voici.data;
 
 import java.io.Serializable;
 

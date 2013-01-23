@@ -1,6 +1,5 @@
-package com.speechpro.util;
+package com.voici.util;
 
-import android.media.MediaRecorder;
 import android.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,15 +42,15 @@ public class ResponseParser {
             String status = root.getAttribute(ATTRIBUTE_STATUS);
             String cardId = root.getAttribute(ATTRIBUTE_CARD_ID);
 
-            Log.d("speechpro: ", "status = " + status);
-            Log.d("speechpro: ", "cardId = " + cardId);
+            Log.d("voici: ", "status = " + status);
+            Log.d("voici: ", "cardId = " + cardId);
 
             if (!status.equals(ResponseResult.Status.ERROR.getName())){
                 result = new ResponseResult(ResponseResult.Status.valueOf(status), cardId);
             } else {
                 result = new ResponseResult(root.getTextContent(), ResponseResult.Status.ERROR);
             }
-            Log.d("speechpro: ", "result = " + result);
+            Log.d("voici: ", "result = " + result);
 
         }catch (ParserConfigurationException e) {
             e.printStackTrace();

@@ -1,18 +1,17 @@
-package com.speechpro.activity;
+package com.voici.activity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.speechpro.R;
-import com.speechpro.data.User;
-import com.speechpro.database.DatabaseAdapter;
-import com.speechpro.util.ResponseResult;
-import com.speechpro.util.Utils;
+import com.voici.R;
+import com.voici.data.User;
+import com.voici.database.DatabaseAdapter;
+import com.voici.util.ResponseResult;
+import com.voici.util.Utils;
 
 /**
  * Created with IntelliJ IDEA.

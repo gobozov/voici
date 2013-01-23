@@ -1,4 +1,4 @@
-package com.speechpro.util;
+package com.voici.util;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
-import com.speechpro.record.ExtAudioRecorder;
 
 import java.io.File;
 
@@ -44,7 +43,7 @@ public class Utils {
         File appDir;
         if (isSdAvailable()) {
             File SD_DIR = Environment.getExternalStorageDirectory();
-            appDir = new File(SD_DIR + "/.speechpro");
+            appDir = new File(SD_DIR + "/.voici");
         } else {
             appDir = new File(context.getFilesDir() + "/sounds");
         }

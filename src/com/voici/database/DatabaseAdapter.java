@@ -1,4 +1,4 @@
-package com.speechpro.database;
+package com.voici.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import com.speechpro.data.User;
+import com.voici.data.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,9 +80,9 @@ public class DatabaseAdapter {
 
     public boolean deleteUser(User user) {
         try {
-            Log.d("speechpro", "Delete user " + user.getName() + " id = " + user.getId());
+            Log.d("voici", "Delete user " + user.getName() + " id = " + user.getId());
             int result = database.delete(TABLE_USERS, FIELD_ID + "=?", new String[]{String.valueOf(user.getId())});
-            Log.d("speechpro", "result = " + result);
+            Log.d("voici", "result = " + result);
             return true;
         } catch (SQLiteException e) {
             return false;

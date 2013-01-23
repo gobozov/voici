@@ -1,4 +1,4 @@
-package com.speechpro.activity;
+package com.voici.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,9 +9,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
-import com.speechpro.R;
-import com.speechpro.data.User;
-import com.speechpro.database.DatabaseAdapter;
+import com.voici.R;
+import com.voici.data.User;
+import com.voici.database.DatabaseAdapter;
 import org.apache.http.util.EncodingUtils;
 
 
@@ -43,12 +43,12 @@ public class WebActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
-                Log.d("speechpro", "Load url  " + url);
+                Log.d("voici", "Load url  " + url);
                 return false;
             }
 
 //            public void onPageFinished(WebView view, String url) {
-//                Log.d("speechpro", "Load url finished  " + url);
+//                Log.d("voici", "Load url finished  " + url);
 //
 //
 //                if (url.startsWith("http://vk.com/") || url.startsWith("http://gmail.com/") || url.startsWith("http://m.facebook.com/")) {
@@ -119,7 +119,7 @@ public class WebActivity extends Activity {
 
                 @Override
                 public void run() {
-                    Log.d("speechpro", "Load gmail javascript");
+                    Log.d("voici", "Load gmail javascript");
                     webView.loadUrl("javascript: {" +
                             "document.getElementById('Email').value = '" + login + "';" +
                             "document.getElementById('Passwd').value = '" + pass + "';" +
@@ -138,7 +138,7 @@ public class WebActivity extends Activity {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.d("speechpro", "Load facebook javascript");
+                    Log.d("voici", "Load facebook javascript");
                     webView.loadUrl("javascript: {" +
                             "document.getElementsByName('email')[0].value = '" + login + "';" +
                             "document.getElementsByName('pass')[0].value = '" + pass + "';" +

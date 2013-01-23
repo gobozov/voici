@@ -1,8 +1,4 @@
-package com.speechpro.util;
-
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
+package com.voici.util;
 
 import java.io.Serializable;
 
@@ -80,7 +76,7 @@ public class ResponseResult implements Serializable {
 //
 //    @Override
 //    public void writeToParcel(Parcel parcel, int i) {
-//        Log.d("speechpro", "writeToParcel");
+//        Log.d("voici", "writeToParcel");
 //        parcel.writeString(key);
 //        parcel.writeSerializable(status);
 //

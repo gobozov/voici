@@ -4,7 +4,6 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:padding="15dp"
-                android:background="@android:color/white"
         >
 
     <GridLayout
@@ -20,7 +19,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="login"
-                android:textColor="@android:color/black"
                 android:textSize="20sp"
                 />
 
@@ -28,7 +26,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/login"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:singleLine="true"
                 />
 
@@ -37,7 +35,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="password"
-                android:textColor="@android:color/black"
                 android:textSize="20sp"
                 />
 
@@ -45,7 +42,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/password"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:singleLine="true"
                 android:password="true"
                 />
@@ -56,16 +53,18 @@
     <Button
             android:text="OK"
             android:id="@+id/buttonOk"
-            style="@style/GreenButtons"
             android:layout_marginTop="30dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             />
 
     <Button
             android:text="voice"
             android:id="@+id/buttonVoice"
-            style="@style/BlueButtons"
             android:layout_above="@id/buttonOk"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
 
             />

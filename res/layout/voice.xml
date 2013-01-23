@@ -5,7 +5,6 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:padding="15dp"
-              android:background="@android:color/white"
               android:gravity="bottom"
         >
 
@@ -13,40 +12,46 @@
     <ImageView    android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_gravity="center"
-                  android:src="@drawable/mic"
+                  android:src="@drawable/microphone"
                   />
 
 
     <Button
-            android:text="start rec 1"
+            android:text="start record 1"
             android:id="@+id/buttonRecord1"
-            style="@style/RedButtonsBig"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             />
 
 
     <Button
-            android:text="start rec 2"
+            android:text="start record 2"
             android:id="@+id/buttonRecord2"
-            style="@style/RedButtonsBig"
-            android:layout_marginTop="10dp"
-            />
-
-
-    <Button
-            android:text="start rec 3"
-            android:id="@+id/buttonRecord3"
-            style="@style/RedButtonsBig"
-            android:layout_marginTop="10dp"
-            />
-
-
-    <Button
-            android:text="Done"
-            android:id="@+id/buttonDone"
-            style="@style/RedButtonsBig"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:enabled="false"
             />
+
+
+    <Button
+            android:text="start record 3"
+            android:id="@+id/buttonRecord3"
+            android:layout_marginTop="20dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            />
+
+
+    <!--<Button-->
+            <!--android:text="Done"-->
+            <!--android:id="@+id/buttonDone"-->
+            <!--android:layout_marginTop="30dp"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:enabled="false"-->
+            <!--/>-->
 
 </LinearLayout>

@@ -4,31 +4,36 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:gravity="center"
-              android:background="@android:color/white"
               android:padding="30dp"
               >
 
     <Button
             android:text="vk.com"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/buttonVK"
             android:minWidth="200dp"
-            style="@style/BlueButtons"
             android:layout_marginBottom="10dp"
+            android:drawableLeft="@drawable/vk_icon"
             />
 
     <Button
             android:text="gmail.com"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/buttonGmail"
             android:minWidth="200dp"
-            style="@style/BlueButtons"
             android:layout_marginBottom="10dp"
+            android:drawableLeft="@drawable/gmail_icon"
             />
 
     <Button
             android:text="facebook.com"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/buttonFacebook"
             android:minWidth="200dp"
-            style="@style/BlueButtons"
+            android:drawableLeft="@drawable/facebook_icon"
             />
 
 

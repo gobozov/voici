@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -55,61 +56,26 @@ public class VoiceActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.voice);
 
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         tempDir = new File(Utils.getAppDir(this), String.valueOf(System.currentTimeMillis()));
-//        if (!tempDir.exists())
-//            tempDir.mkdir();
 
 
-//        buttonLast = (Button) findViewById(R.id.buttonLast);
-//        buttonLast.setOnClickListener(new View.OnClickListener() {
+//        buttonDone = (Button) findViewById(R.id.buttonDone);
+//        buttonDone.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
-//                File[] folders = Utils.getAppDir(VoiceActivity.this).listFiles(new FileFilter() {
-//                    @Override
-//                    public boolean accept(File file) {
-//                        if (file.isDirectory()) return true;
-//                        return false;
-//                    }
-//                });
 //
-//                File last = folders[0];
-//                for (File f : folders) {
-//                    if (f.getName().compareTo(last.getName()) > 0) {
-//                        last = f;
-//                        Log.d("voici", "last = " + f.getName());
+//                for (int i = 0; i < completeRecords.length; i++) {
+//                    if (completeRecords[i] == null) {
+//                        // todo show notification
 //                    }
-//                }
-//
-//                File lastFiles[] = last.listFiles();
-//                for (int i = 0; i < lastFiles.length; i++) {
-//                    completeRecords[i] = lastFiles[i].getAbsolutePath();
 //                }
 //                new EnrollTask(VoiceActivity.this).execute(completeRecords);
 //
 //
 //            }
 //        });
-
-        buttonDone = (Button) findViewById(R.id.buttonDone);
-        buttonDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                for (int i = 0; i < completeRecords.length; i++) {
-                    if (completeRecords[i] == null) {
-                        // todo show notification
-                    }
-                }
-
-//                Intent data = new Intent();
-//                data.putExtra("records", completeRecords);
-//                setResult(RESULT_OK, data);
-
-                new EnrollTask(VoiceActivity.this).execute(completeRecords);
-
-
-            }
-        });
 
         buttonRecord1 = (Button) findViewById(R.id.buttonRecord1);
         buttonRecord1.setOnClickListener(new View.OnClickListener() {
@@ -235,10 +201,12 @@ public class VoiceActivity extends Activity {
                         case R.id.buttonRecord1:
                             record1Done = true;
                             completeRecords[0] = filePath;
+                            buttonRecord2.setEnabled(true);
                             break;
                         case R.id.buttonRecord2:
                             record2Done = true;
                             completeRecords[1] = filePath;
+                            buttonRecord3.setEnabled(true);
                             break;
                         case R.id.buttonRecord3:
                             record3Done = true;
@@ -312,6 +280,16 @@ public class VoiceActivity extends Activity {
 
             //Log.d("voici", "Enroll response = " + response);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
     }
 
 

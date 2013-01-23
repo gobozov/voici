@@ -3,6 +3,7 @@ package com.voici.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,6 +35,8 @@ public class AddActivity extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add);
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         site = getIntent().getIntExtra("site", DatabaseAdapter.VK);
         editedUser = getIntent().getSerializableExtra("user") == null ? null : (User) getIntent().getSerializableExtra("user");
@@ -131,6 +134,16 @@ public class AddActivity extends Activity {
         if (text.getText().toString() == null || text.getText().toString().trim().length() == 0) {
             text.setError("Fill field!");
             return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
         }
         return true;
     }

@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import com.voici.R;
@@ -46,78 +49,81 @@ public class LoginActivity extends Activity {
     private int site;
     private int selectedPosition = -1;
     private ExtAudioRecorder extAudioRecorder;
+    private ActionMode mMode;
 
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
         site = getIntent().getIntExtra("site", DatabaseAdapter.VK);
 
         dbAdapter = new DatabaseAdapter(this);
         dbAdapter.open();
 
-        buttonAdd = (Button) findViewById(R.id.buttonAdd);
-        buttonAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, AddActivity.class);
-                intent.putExtra("site", site);
-                startActivityForResult(intent,CODE_ADD_USER);
-            }
-        });
+//        buttonAdd = (Button) findViewById(R.id.buttonAdd);
+//        buttonAdd.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(LoginActivity.this, AddActivity.class);
+//                intent.putExtra("site", site);
+//                startActivityForResult(intent,CODE_ADD_USER);
+//            }
+//        });
 
 
-        buttonDelete = (Button) findViewById(R.id.buttonDelete);
-        buttonDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (selectedPosition != -1){
-                    User user = userAdapter.getItem(selectedPosition);
-                    if (user != null){
-                        dbAdapter.deleteUser(user);
-                        userAdapter.remove(user);
-                        userAdapter.notifyDataSetChanged();
-                    }
-                }else{
-                    Toast.makeText(LoginActivity.this, "Select user to delete", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        buttonEdit = (Button) findViewById(R.id.buttonEdit);
-        buttonEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (selectedPosition != -1){
-                    User user = userAdapter.getItem(selectedPosition);
-                    Intent intent = new Intent(LoginActivity.this, AddActivity.class);
-                    intent.putExtra("site", site);
-                    intent.putExtra("user", user);
-                    startActivityForResult(intent,CODE_EDIT_USER);
-                }else{
-                    Toast.makeText(LoginActivity.this, "Select user to edit", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+//        buttonDelete = (Button) findViewById(R.id.buttonDelete);
+//        buttonDelete.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (selectedPosition != -1){
+//                    User user = userAdapter.getItem(selectedPosition);
+//                    if (user != null){
+//                        dbAdapter.deleteUser(user);
+//                        userAdapter.remove(user);
+//                        userAdapter.notifyDataSetChanged();
+//                    }
+//                }else{
+//                    Toast.makeText(LoginActivity.this, "Select user to delete", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//
+//        buttonEdit = (Button) findViewById(R.id.buttonEdit);
+//        buttonEdit.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (selectedPosition != -1){
+//                    User user = userAdapter.getItem(selectedPosition);
+//                    Intent intent = new Intent(LoginActivity.this, AddActivity.class);
+//                    intent.putExtra("site", site);
+//                    intent.putExtra("user", user);
+//                    startActivityForResult(intent,CODE_EDIT_USER);
+//                }else{
+//                    Toast.makeText(LoginActivity.this, "Select user to edit", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
 
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (selectedPosition != -1){
+                if (selectedPosition != -1) {
                     User user = userAdapter.getItem(selectedPosition);
 
-                    if (Utils.isEmptyString(user.getKey())){
+                    if (Utils.isEmptyString(user.getKey())) {
                         Toast.makeText(LoginActivity.this, "Selected user still don't have voice password", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                   File tempDir = new File(Utils.getAppDir(LoginActivity.this), String.valueOf(System.currentTimeMillis()));
+                    File tempDir = new File(Utils.getAppDir(LoginActivity.this), String.valueOf(System.currentTimeMillis()));
                     if (!tempDir.exists()) tempDir.mkdir();
-                   showRecordDialog(tempDir.getAbsolutePath() + "/speech.wav", user.getKey());
+                    showRecordDialog(tempDir.getAbsolutePath() + "/speech.wav", user.getKey());
 
-                }else{
+                } else {
                     Toast.makeText(LoginActivity.this, "Select user to login", Toast.LENGTH_SHORT).show();
                 }
 
@@ -128,6 +134,79 @@ public class LoginActivity extends Activity {
         list = (ListView) findViewById(R.id.listUsers);
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 1, 1, "Add new").setIcon(android.R.drawable.ic_menu_add).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+            case 1:
+                Intent intent = new Intent(LoginActivity.this, AddActivity.class);
+                intent.putExtra("site", site);
+                startActivityForResult(intent, CODE_ADD_USER);
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private final class EditDeleteActionMode implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            menu.add(0, 1, 1, "Edit").setIcon(android.R.drawable.ic_menu_edit).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            menu.add(0, 2, 2, "Delete").setIcon(android.R.drawable.ic_menu_delete).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case 1:
+                    if (selectedPosition != -1) {
+                        User user = userAdapter.getItem(selectedPosition);
+                        Intent intent = new Intent(LoginActivity.this, AddActivity.class);
+                        intent.putExtra("site", site);
+                        intent.putExtra("user", user);
+                        startActivityForResult(intent, CODE_EDIT_USER);
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Select user to edit", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case 2:
+                    if (selectedPosition != -1) {
+                        User user = userAdapter.getItem(selectedPosition);
+                        if (user != null) {
+                            dbAdapter.deleteUser(user);
+                            userAdapter.remove(user);
+                            userAdapter.notifyDataSetChanged();
+                        }
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Select user to delete", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+            actionMode.finish();
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            mMode = null;
+        }
+    }
 
     private void showRecordDialog(final String filePath, final String key) {
         final AlertDialog alert;
@@ -203,18 +282,17 @@ public class LoginActivity extends Activity {
             if (dialog.isShowing())
                 dialog.dismiss();
 
-            if (!new File(filePath).exists()){
+            if (!new File(filePath).exists()) {
                 Toast.makeText(LoginActivity.this, "Speech file not exists, something wrong...", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-             new EnrollVerifyTask(LoginActivity.this).execute(key, filePath);
+            new EnrollVerifyTask(LoginActivity.this).execute(key, filePath);
 
 
         }
 
     }
-
 
 
     private class EnrollVerifyTask extends AsyncTask<String, Void, ResponseResult> {
@@ -230,7 +308,7 @@ public class LoginActivity extends Activity {
         @Override
         protected void onPreExecute() {
 
-            if (!Utils.isInternetAvailable(context)){
+            if (!Utils.isInternetAvailable(context)) {
                 Utils.showMessageDialog(context, "Internet not available.", "You don't have an internet connection, check it and try again.");
                 cancel(true);
                 return;
@@ -258,7 +336,7 @@ public class LoginActivity extends Activity {
 
             if (result != null) {
 
-                if (result.getStatus().equals(ResponseResult.Status.OK)){
+                if (result.getStatus().equals(ResponseResult.Status.OK)) {
                     String s = "";
                     if (site == DatabaseAdapter.VK) s = "Vkontakte";
                     if (site == DatabaseAdapter.GMAIL) s = "Gmail";
@@ -273,7 +351,6 @@ public class LoginActivity extends Activity {
                 } else {
                     Utils.showMessageDialog(LoginActivity.this, "Error", result.getError());
                 }
-
 
 
             } else {
@@ -312,7 +389,10 @@ public class LoginActivity extends Activity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                 selectedPosition=i;
+                selectedPosition = i;
+                if (mMode == null)
+                    startActionMode(new EditDeleteActionMode());
+
             }
         });
     }
@@ -324,7 +404,6 @@ public class LoginActivity extends Activity {
 
         super.onPause();
     }
-
 
 
 }

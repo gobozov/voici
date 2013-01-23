@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -32,6 +33,7 @@ public class WebActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.web);
 
+        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         site = getIntent().getIntExtra("site", -1);
         user = getIntent().getSerializableExtra("user") != null ? (User) getIntent().getSerializableExtra("user") : null;
@@ -46,39 +48,9 @@ public class WebActivity extends Activity {
                 Log.d("voici", "Load url  " + url);
                 return false;
             }
-
-//            public void onPageFinished(WebView view, String url) {
-//                Log.d("voici", "Load url finished  " + url);
-//
-//
-//                if (url.startsWith("http://vk.com/") || url.startsWith("http://gmail.com/") || url.startsWith("http://m.facebook.com/")) {
-//
-//                    if (site == DatabaseAdapter.VK) {
-//                        byte[] post = EncodingUtils.getBytes("email=" + user.getName() + "&pass=" + user.getPassword(), "BASE64");
-//                        webView.postUrl("https://login.vk.com/?act=login&_origin=http://m.vk.com&ip_h=c199f1980332ba6a9d&role=pda&utf8=1", post);
-//                    }
-//                    if (site == DatabaseAdapter.GMAIL) {
-//                        webView.loadUrl("javascript: {" +
-//                                "document.getElementsByName('email')[0].value = '" + user.getName() + "';" +
-//                                "document.getElementsByName('pass')[0].value = '" + user.getPassword() + "';" +
-//                                "var form = document.forms[0];" +
-//                                "form.submit(); };");
-//                    }
-//                    if (site == DatabaseAdapter.FACEBOOK) {
-//                        webView.loadUrl("javascript: {" +
-//                                "document.getElementsByName('email')[0].value = '" + user.getName() + "';" +
-//                                "document.getElementsByName('pass')[0].value = '" + user.getPassword() + "';" +
-//                                "var form = document.forms[0];" +
-//                                "form.submit(); };");
-//                    }
-//                }
-//            }
-
         });
 
         WebSettings webSettings = webView.getSettings();
-
-
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
         webSettings.setSavePassword(false);
@@ -147,6 +119,16 @@ public class WebActivity extends Activity {
                 }
             }, 3000);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return true;
     }
 
 }

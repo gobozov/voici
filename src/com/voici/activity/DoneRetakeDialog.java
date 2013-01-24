@@ -44,17 +44,6 @@ public class DoneRetakeDialog extends Dialog {
         buttonListen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                MediaPlayer mp;
-                ///filePath = /mnt/sdcard/.voici/record1.wav
-//                mp = MediaPlayer.create(context, Uri.parse("file://" + filePath.substring(4, filePath.length())));
-//                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//                    @Override
-//                    public void onCompletion(MediaPlayer mp) {
-//                        mp.release();
-//                    }
-//                });
-//                mp.start();
-
                 try {
                     final MediaPlayer player = new MediaPlayer();
                     player.setDataSource(filePath);

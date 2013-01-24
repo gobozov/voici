@@ -15,6 +15,7 @@ public class ResponseResult implements Serializable {
     private String key;
     private Status status;
     private String error;
+    private String score;
 
     public ResponseResult() {
     }
@@ -22,6 +23,13 @@ public class ResponseResult implements Serializable {
     public ResponseResult(Status status, String key) {
         this.status = status;
         this.key = key;
+    }
+
+
+    public ResponseResult(Status status, String key, String score) {
+        this.status = status;
+        this.key = key;
+        this.score = score;
     }
 
     public ResponseResult(String error, Status status) {
@@ -56,6 +64,14 @@ public class ResponseResult implements Serializable {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public String getScore() {
+        return score;
+    }
+
+    public void setScore(String score) {
+        this.score = score;
     }
 
     @Override

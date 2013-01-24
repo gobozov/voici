@@ -6,15 +6,20 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.ActionMode;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import com.voici.R;
 import com.voici.client.SpeechProClient;
+import com.voici.data.User;
 import com.voici.record.ExtAudioRecorder;
 import com.voici.util.ResponseParser;
 import com.voici.util.ResponseResult;
@@ -32,22 +37,16 @@ import java.io.InputStream;
  */
 public class VoiceActivity extends Activity {
 
-    //public static final File SD_DIR = Environment.getExternalStorageDirectory();
-    //public static final File APP_DIR = new File(SD_DIR + "/.voici");
-    //private File tempDir = new File(APP_DIR, String.valueOf(System.currentTimeMillis()));
-
 
     private ExtAudioRecorder extAudioRecorder = null;
     private Button buttonRecord1;
     private Button buttonRecord2;
     private Button buttonRecord3;
-    private Button buttonDone;
-   // private Button buttonLast;
 
     private boolean record1Done;
     private boolean record2Done;
     private boolean record3Done;
-
+    private ActionMode mMode;
     private File tempDir;
 
     private String[] completeRecords = new String[3];
@@ -60,22 +59,6 @@ public class VoiceActivity extends Activity {
 
         tempDir = new File(Utils.getAppDir(this), String.valueOf(System.currentTimeMillis()));
 
-
-//        buttonDone = (Button) findViewById(R.id.buttonDone);
-//        buttonDone.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                for (int i = 0; i < completeRecords.length; i++) {
-//                    if (completeRecords[i] == null) {
-//                        // todo show notification
-//                    }
-//                }
-//                new EnrollTask(VoiceActivity.this).execute(completeRecords);
-//
-//
-//            }
-//        });
 
         buttonRecord1 = (Button) findViewById(R.id.buttonRecord1);
         buttonRecord1.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +100,6 @@ public class VoiceActivity extends Activity {
                     public void onClick(DialogInterface d, int which) {
 
                         //  String fileName = tempDir.getAbsolutePath() + "/record" + buttonId + ".wav";
-                        System.out.println("filePath = " + filePath);
                         extAudioRecorder = ExtAudioRecorder.getInstanse(false);
                         extAudioRecorder.setOutputFile(filePath);
                         extAudioRecorder.prepare();
@@ -151,7 +133,7 @@ public class VoiceActivity extends Activity {
             this.dialog = new ProgressDialog(context);
             this.dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             this.dialog.setCancelable(false);
-            this.dialog.setMax(5000);
+            this.dialog.setMax(5);
 
         }
 
@@ -166,8 +148,12 @@ public class VoiceActivity extends Activity {
             extAudioRecorder.start();
             Log.d("voici", "start record");
             long startTime = System.currentTimeMillis();
-            while (System.currentTimeMillis() - startTime < 5000) {
-                dialog.setProgress((int) (System.currentTimeMillis() - startTime));
+            long next = 1000;
+            while (System.currentTimeMillis() - startTime < 5500) {
+                if (System.currentTimeMillis() - startTime > next){
+                    dialog.setProgress((int)next/1000);
+                    next = next + 1000;
+                }
             }
             extAudioRecorder.stop();
             extAudioRecorder.release();
@@ -196,7 +182,7 @@ public class VoiceActivity extends Activity {
                 public void onDone() {
                     drDialog.dismiss();
                     Log.d("voici", "record complete " + filePath);
-                    ((Button) findViewById(buttonId)).setBackgroundResource(R.drawable.green_buttons);
+                    ((Button) findViewById(buttonId)).setBackgroundResource(R.drawable.green_buttons_holo);
                     switch (buttonId) {
                         case R.id.buttonRecord1:
                             record1Done = true;
@@ -215,8 +201,11 @@ public class VoiceActivity extends Activity {
                     }
 
                     if (record1Done && record2Done && record3Done) {
-                        buttonDone.setEnabled(true);
-                        buttonDone.setBackgroundResource(R.drawable.green_buttons);
+                        //buttonDone.setEnabled(true);
+                       // buttonDone.setBackgroundResource(R.drawable.green_buttons);
+
+                        if (mMode == null)
+                            startActionMode(new RecordsCompleteMode());
                     }
                 }
             });
@@ -227,6 +216,36 @@ public class VoiceActivity extends Activity {
 
         }
 
+    }
+
+    private final class RecordsCompleteMode implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            menu.add(0, 1, 1, "Done").setIcon(android.R.drawable.ic_menu_send).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case 1:
+                    new EnrollTask(VoiceActivity.this).execute(completeRecords);
+                    break;
+            }
+            actionMode.finish();
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            mMode = null;
+        }
     }
 
 
@@ -257,10 +276,11 @@ public class VoiceActivity extends Activity {
 
         @Override
         protected ResponseResult doInBackground(String[]... strings) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SpeechProClient client = new SpeechProClient();
-            InputStream stream = client.executeEnroll("http://voicekey.speechpro-usa.com/avis/vk_api2/enroll.php", "zab", strings[0]);
-            ResponseParser parser = new ResponseParser();
-            return parser.getEnrollResult(stream);
+            InputStream stream = client.executeEnroll(prefs.getString("key_server", "") + "/avis/vk_api2/enroll.php",  prefs.getString("key_key", ""), strings[0]);
+            ResponseParser parser = new ResponseParser(context);
+            return parser.getEnrollResult(stream, false);
 
         }
 
@@ -278,9 +298,11 @@ public class VoiceActivity extends Activity {
                 Toast.makeText(context, "Something wrong... ", Toast.LENGTH_LONG).show();
             }
 
-            //Log.d("voici", "Enroll response = " + response);
         }
     }
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

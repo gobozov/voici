@@ -3,6 +3,9 @@ package com.voici.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import com.voici.R;
@@ -15,6 +18,8 @@ public class SplashActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
 
         Button buttonVk = (Button)findViewById(R.id.buttonVK);
@@ -48,13 +53,25 @@ public class SplashActivity extends Activity {
         });
 
 
-
-
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, 1, 1, "Settings").setIcon(android.R.drawable.ic_menu_manage).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        return super.onCreateOptionsMenu(menu);
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
 
+            case 1:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
 
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 
 

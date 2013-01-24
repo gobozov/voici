@@ -51,7 +51,7 @@
 
 
     <Button
-            android:text="OK"
+            android:text="save"
             android:id="@+id/buttonOk"
             android:layout_marginTop="30dp"
             android:layout_width="fill_parent"

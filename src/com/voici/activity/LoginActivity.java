@@ -6,13 +6,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.widget.*;
 import com.voici.R;
 import com.voici.client.SpeechProClient;
@@ -42,9 +41,6 @@ public class LoginActivity extends Activity {
     private DatabaseAdapter dbAdapter;
     private ArrayAdapter<User> userAdapter;
     private ListView list;
-    private Button buttonAdd;
-    private Button buttonDelete;
-    private Button buttonEdit;
     private Button buttonLogin;
     private int site;
     private int selectedPosition = -1;
@@ -63,49 +59,6 @@ public class LoginActivity extends Activity {
         dbAdapter = new DatabaseAdapter(this);
         dbAdapter.open();
 
-//        buttonAdd = (Button) findViewById(R.id.buttonAdd);
-//        buttonAdd.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(LoginActivity.this, AddActivity.class);
-//                intent.putExtra("site", site);
-//                startActivityForResult(intent,CODE_ADD_USER);
-//            }
-//        });
-
-
-//        buttonDelete = (Button) findViewById(R.id.buttonDelete);
-//        buttonDelete.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (selectedPosition != -1){
-//                    User user = userAdapter.getItem(selectedPosition);
-//                    if (user != null){
-//                        dbAdapter.deleteUser(user);
-//                        userAdapter.remove(user);
-//                        userAdapter.notifyDataSetChanged();
-//                    }
-//                }else{
-//                    Toast.makeText(LoginActivity.this, "Select user to delete", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//
-//        buttonEdit = (Button) findViewById(R.id.buttonEdit);
-//        buttonEdit.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (selectedPosition != -1){
-//                    User user = userAdapter.getItem(selectedPosition);
-//                    Intent intent = new Intent(LoginActivity.this, AddActivity.class);
-//                    intent.putExtra("site", site);
-//                    intent.putExtra("user", user);
-//                    startActivityForResult(intent,CODE_EDIT_USER);
-//                }else{
-//                    Toast.makeText(LoginActivity.this, "Select user to edit", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
 
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
         buttonLogin.setOnClickListener(new View.OnClickListener() {
@@ -251,7 +204,7 @@ public class LoginActivity extends Activity {
             this.dialog = new ProgressDialog(context);
             this.dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             this.dialog.setCancelable(false);
-            this.dialog.setMax(5000);
+            this.dialog.setMax(5);
 
         }
 
@@ -266,8 +219,12 @@ public class LoginActivity extends Activity {
             extAudioRecorder.start();
             Log.d("voici", "start record");
             long startTime = System.currentTimeMillis();
-            while (System.currentTimeMillis() - startTime < 5000) {
-                dialog.setProgress((int) (System.currentTimeMillis() - startTime));
+            long next = 1000;
+            while (System.currentTimeMillis() - startTime < 5500) {
+                if (System.currentTimeMillis() - startTime > next) {
+                    dialog.setProgress((int) next / 1000);
+                    next = next + 1000;
+                }
             }
             extAudioRecorder.stop();
             extAudioRecorder.release();
@@ -286,7 +243,6 @@ public class LoginActivity extends Activity {
                 Toast.makeText(LoginActivity.this, "Speech file not exists, something wrong...", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             new EnrollVerifyTask(LoginActivity.this).execute(key, filePath);
 
 
@@ -322,10 +278,11 @@ public class LoginActivity extends Activity {
 
         @Override
         protected ResponseResult doInBackground(String... strings) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SpeechProClient client = new SpeechProClient();
-            InputStream stream = client.executeEnrollVerify("http://voicekey.speechpro-usa.com/avis/vk_api2/enroll_verify.php", "zab", strings[0], strings[1]);
-            ResponseParser parser = new ResponseParser();
-            return parser.getEnrollResult(stream);
+            InputStream stream = client.executeEnrollVerify(prefs.getString("key_server", "") + "/avis/vk_api2/enroll_verify.php", prefs.getString("key_key", ""), strings[0], strings[1]);
+            ResponseParser parser = new ResponseParser(context);
+            return parser.getEnrollResult(stream, true);
 
         }
 
@@ -357,7 +314,6 @@ public class LoginActivity extends Activity {
                 Toast.makeText(context, "Something wrong... ", Toast.LENGTH_LONG).show();
             }
 
-            //Log.d("voici", "Enroll response = " + response);
         }
     }
 
@@ -383,7 +339,12 @@ public class LoginActivity extends Activity {
         super.onResume();
         dbAdapter.open();
         List<User> users = dbAdapter.getAllUsers(site);
-        userAdapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_single_choice, users);
+
+
+        //userAdapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_single_choice, users);
+        userAdapter = new UsersAdapter(this, R.layout.user_item, users);
+
+
         list.setAdapter(userAdapter);
         list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -405,5 +366,63 @@ public class LoginActivity extends Activity {
         super.onPause();
     }
 
+
+    private class UsersAdapter extends ArrayAdapter<User> {
+
+        private Context context;
+        private List<User> users;
+
+        private UsersAdapter(Context context, int textViewResourceId, List<User> objects) {
+            super(context, textViewResourceId, objects);
+            this.context = context;
+            this.users = objects;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            final int pos = position;
+            final ViewHolder holder;
+            if (convertView == null) {
+                LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                convertView = vi.inflate(R.layout.user_item, null);
+                holder = new ViewHolder();
+                holder.image = (ImageView) convertView.findViewById(R.id.image);
+                holder.user = (TextView) convertView.findViewById(R.id.user);
+                holder.radio = (RadioButton) convertView.findViewById(R.id.radio);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            User user = users.get(position);
+            if (user != null) {
+                holder.image.setBackgroundResource((user.getKey() == null || user.getKey().equals("")) ? R.drawable.device_access_mic_muted : R.drawable.device_access_mic);
+                holder.user.setText(user.getName());
+                holder.radio.setChecked(position == selectedPosition);
+            }
+
+            convertView.setOnClickListener(new View.OnClickListener()  {
+                @Override
+                public void onClick(View v) {
+                    selectedPosition = pos;
+                    if (mMode == null)
+                        startActionMode(new EditDeleteActionMode());
+
+                    userAdapter.notifyDataSetChanged();
+
+                }
+            });
+
+            return convertView;
+        }
+
+
+        protected class ViewHolder {
+            protected ImageView image;
+            protected TextView user;
+            protected RadioButton radio;
+        }
+
+    }
 
 }

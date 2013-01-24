@@ -1,5 +1,8 @@
 package com.voici.util;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -14,6 +17,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.*;
 
 /**
@@ -27,13 +33,20 @@ public class ResponseParser {
 
     private static final String ATTRIBUTE_STATUS = "Status";
     private static final String ATTRIBUTE_CARD_ID = "CardID";
+    private Context context;
+    private SharedPreferences prefs;
 
+    public ResponseParser(Context context) {
+        this.context = context;
+        prefs = PreferenceManager.getDefaultSharedPreferences(context);
+    }
 
-    public ResponseResult getEnrollResult(InputStream xmlStream){
+    public ResponseResult getEnrollResult(InputStream xmlStream, boolean isVerify){
         ResponseResult result = null;
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = null;
         Document dom = null;
+        String score = null;
         try {
             builder = factory.newDocumentBuilder();
             dom = builder.parse(xmlStream);
@@ -45,8 +58,25 @@ public class ResponseParser {
             Log.d("voici: ", "status = " + status);
             Log.d("voici: ", "cardId = " + cardId);
 
+            if (isVerify){
+                score = getScores(dom);
+                Log.d("voici: ", "score = " + score);
+
+            }
             if (!status.equals(ResponseResult.Status.ERROR.getName())){
-                result = new ResponseResult(ResponseResult.Status.valueOf(status), cardId);
+
+                if (isVerify){
+                    int i = (int) (Double.valueOf(score) * 100);
+                    String barrier = prefs.getString("key_score", "80");
+
+                    if (i >= Integer.valueOf(barrier)){
+                        result = new ResponseResult(ResponseResult.Status.valueOf(status), cardId, score);
+                    } else {
+                        result = new ResponseResult("Voice verification scores is too low", ResponseResult.Status.ERROR);
+                    }
+                }
+                else
+                    result = new ResponseResult(ResponseResult.Status.valueOf(status), cardId);
             } else {
                 result = new ResponseResult(root.getTextContent(), ResponseResult.Status.ERROR);
             }
@@ -62,6 +92,30 @@ public class ResponseParser {
          return result;
     }
 
+
+//    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
+//        ResponseParser responseParser = new ResponseParser();
+//        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+//        DocumentBuilder builder = factory.newDocumentBuilder();
+//        Document dom = builder.parse(new FileInputStream(new File("C:\\Users\\gb\\Desktop\\SpeechPro\\response_verify.xml")));
+//        String scores = responseParser.getScores(dom);
+//        System.out.println("scores = " + scores);
+//        double d = Double.valueOf(scores);
+//        int i = (int) (d * 100);
+//        System.out.println("i = " + i);
+//    }
+
+    private String getScores(Document document){
+        String score = null;
+        XPathFactory pathFactory = XPathFactory.newInstance();
+        XPath xpath = pathFactory.newXPath();
+        try {
+            score = xpath.evaluate("/EnrollVerify/CardCompareResult/VoiceKeyScore/text()", document.getDocumentElement());
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
+        }
+        return score;
+    }
 
     public static void printDocument(Document doc, OutputStream out) throws IOException, TransformerException {
         TransformerFactory tf = TransformerFactory.newInstance();

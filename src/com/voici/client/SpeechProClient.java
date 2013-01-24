@@ -82,12 +82,12 @@ public class SpeechProClient {
 //                    resEntity.consumeContent();
 //                }
             }else{
-                 resp = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"UTF-8\"?><EnrollVerify Status=\"ERROR\">" + EntityUtils.toString(response.getEntity())  + "</EnrollVerify>").getBytes("UTF-8"));
+                 resp = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"UTF-8\"?><EnrollVerify Status=\"ERROR\">Voice upload failed</EnrollVerify>").getBytes("UTF-8"));
             }
 
         } catch (IOException e) {
             Log.d("voici", "Enroll Error " + e.getMessage());
-            e.printStackTrace();
+            resp = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"UTF-8\"?><EnrollVerify Status=\"ERROR\">Voice upload failed</EnrollVerify>").getBytes());
         }
 //        } finally {
 //            httpClient.getConnectionManager().shutdown();
@@ -120,12 +120,12 @@ public class SpeechProClient {
 
                 }
             }else{
-                resp = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"UTF-8\"?><EnrollVerify Status=\"ERROR\">" + EntityUtils.toString(response.getEntity())  + "</EnrollVerify>").getBytes("UTF-8"));
+                resp = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"UTF-8\"?><EnrollVerify Status=\"ERROR\">Voice verification failed</EnrollVerify>").getBytes("UTF-8"));
             }
 
         } catch (IOException e) {
             Log.d("voici", "Enroll Verify Error " + e.getMessage());
-            e.printStackTrace();
+            resp = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"UTF-8\"?><EnrollVerify Status=\"ERROR\">Voice verification failed</EnrollVerify>").getBytes());
         }
         return resp;
     }

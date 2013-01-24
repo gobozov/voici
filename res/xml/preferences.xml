@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.preference.PreferenceCategory android:title="Server settings">
+
+
+        <EditTextPreference android:key="key_server"
+                            android:defaultValue="http://voicekey.speechpro-usa.com"
+                            android:title="server address"
+                            />
+
+        <EditTextPreference android:key="key_key"
+                            android:defaultValue="zab"
+                            android:title="api key"
+                />
+
+        <EditTextPreference android:key="key_score"
+                            android:defaultValue="80"
+                            android:title="approve score (percent)"
+                            android:numeric="integer"
+                            android:inputType="number"
+                />
+
+    </android.preference.PreferenceCategory>
+
+</PreferenceScreen>

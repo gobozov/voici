@@ -303,6 +303,7 @@ public class LoginActivity extends Activity {
                     Intent intent = new Intent(LoginActivity.this, WebActivity.class);
                     intent.putExtra("site", site);
                     intent.putExtra("user", userAdapter.getItem(selectedPosition));
+                   // Utils.cleanAppDir(context);
                     startActivity(intent);
 
                 } else {

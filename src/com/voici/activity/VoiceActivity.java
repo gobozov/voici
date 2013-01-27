@@ -149,7 +149,7 @@ public class VoiceActivity extends Activity {
             Log.d("voici", "start record");
             long startTime = System.currentTimeMillis();
             long next = 1000;
-            while (System.currentTimeMillis() - startTime < 5500) {
+            while (System.currentTimeMillis() - startTime < 5200) {
                 if (System.currentTimeMillis() - startTime > next){
                     dialog.setProgress((int)next/1000);
                     next = next + 1000;

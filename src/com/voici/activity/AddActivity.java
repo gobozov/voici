@@ -14,6 +14,8 @@ import com.voici.database.DatabaseAdapter;
 import com.voici.util.ResponseResult;
 import com.voici.util.Utils;
 
+import java.io.File;
+
 /**
  * Created with IntelliJ IDEA.
  * User: gb
@@ -91,7 +93,7 @@ public class AddActivity extends Activity {
                         dbAdapter.addUser(user, site);
                     }
 
-
+                    //Utils.cleanAppDir(AddActivity.this);
                     setResult(RESULT_OK);
                     finish();
 

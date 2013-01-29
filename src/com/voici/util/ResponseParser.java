@@ -93,18 +93,6 @@ public class ResponseParser {
     }
 
 
-//    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
-//        ResponseParser responseParser = new ResponseParser();
-//        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//        DocumentBuilder builder = factory.newDocumentBuilder();
-//        Document dom = builder.parse(new FileInputStream(new File("C:\\Users\\gb\\Desktop\\SpeechPro\\response_verify.xml")));
-//        String scores = responseParser.getScores(dom);
-//        System.out.println("scores = " + scores);
-//        double d = Double.valueOf(scores);
-//        int i = (int) (d * 100);
-//        System.out.println("i = " + i);
-//    }
-
     private String getScores(Document document){
         String score = null;
         XPathFactory pathFactory = XPathFactory.newInstance();

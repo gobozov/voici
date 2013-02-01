@@ -73,14 +73,9 @@ public class SpeechProClient {
                 HttpEntity resEntity = response.getEntity();
                 System.out.println(response.getStatusLine());
                 if (resEntity != null) {
-                    //resp = EntityUtils.toString(resEntity);
-                    //System.out.println(resp);
                     resp = resEntity.getContent();
 
                 }
-//                if (resEntity != null) {
-//                    resEntity.consumeContent();
-//                }
             }else{
                  resp = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"UTF-8\"?><EnrollVerify Status=\"ERROR\">Voice upload failed</EnrollVerify>").getBytes("UTF-8"));
             }
@@ -89,9 +84,6 @@ public class SpeechProClient {
             Log.d("voici", "Enroll Error " + e.getMessage());
             resp = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"UTF-8\"?><EnrollVerify Status=\"ERROR\">Voice upload failed</EnrollVerify>").getBytes());
         }
-//        } finally {
-//            httpClient.getConnectionManager().shutdown();
-//        }
 
         return resp;
     }

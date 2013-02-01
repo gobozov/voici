@@ -45,7 +45,7 @@ public class Utils {
             File SD_DIR = Environment.getExternalStorageDirectory();
             appDir = new File(SD_DIR + "/.voici");
         } else {
-            appDir = new File(context.getFilesDir() + "/sounds");
+             appDir = context.getDir("sounds", Context.MODE_PRIVATE);
         }
         if (!appDir.exists())
             appDir.mkdir();

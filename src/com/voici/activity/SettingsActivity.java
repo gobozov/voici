@@ -17,7 +17,7 @@ import com.voici.R;
 public class SettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener{
 
 
-    private EditTextPreference server;
+    //private EditTextPreference server;
     private EditTextPreference key;
     private EditTextPreference score;
     private SharedPreferences prefs;
@@ -26,7 +26,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
 
-        server = (EditTextPreference) getPreferenceScreen().findPreference("key_server");
+       // server = (EditTextPreference) getPreferenceScreen().findPreference("key_server");
         key = (EditTextPreference) getPreferenceScreen().findPreference("key_key");
         score = (EditTextPreference) getPreferenceScreen().findPreference("key_score");
     }
@@ -37,7 +37,7 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         super.onResume();
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        server.setSummary(prefs.getString("key_server", ""));
+       // server.setSummary(prefs.getString("key_server", ""));
         key.setSummary(prefs.getString("key_key", ""));
         score.setSummary(prefs.getString("key_score", ""));
         score.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -71,9 +71,9 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String pref_key) {
-        if (pref_key.equals("key_server")){
+        /*if (pref_key.equals("key_server")){
             server.setSummary(prefs.getString("key_server", ""));
-        }else if (pref_key.equals("key_key")){
+        }else */if (pref_key.equals("key_key")){
             key.setSummary(prefs.getString("key_key", ""));
         }else if (pref_key.equals("key_score")){
             score.setSummary(prefs.getString("key_score", ""));

@@ -26,6 +26,7 @@ import com.voici.util.ResponseResult;
 import com.voici.util.Utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -75,8 +76,14 @@ public class VoiceActivity extends Activity {
             @Override
             public void onClick(View view) {
                 if (!tempDir.exists()) tempDir.mkdir();
+
                 String fileName = tempDir.getAbsolutePath() + "/record2.wav";
-                showRecordDialog(fileName, R.id.buttonRecord2);
+                extAudioRecorder = ExtAudioRecorder.getInstanse(false);
+                extAudioRecorder.setOutputFile(fileName);
+                extAudioRecorder.prepare();
+                new RecordSpeechTask(VoiceActivity.this, fileName, R.id.buttonRecord2).execute();
+
+                //showRecordDialog(fileName, R.id.buttonRecord2);
             }
         });
         buttonRecord3 = (Button) findViewById(R.id.buttonRecord3);
@@ -85,7 +92,11 @@ public class VoiceActivity extends Activity {
             public void onClick(View view) {
                 if (!tempDir.exists()) tempDir.mkdir();
                 String fileName = tempDir.getAbsolutePath() + "/record3.wav";
-                showRecordDialog(fileName, R.id.buttonRecord3);
+                extAudioRecorder = ExtAudioRecorder.getInstanse(false);
+                extAudioRecorder.setOutputFile(fileName);
+                extAudioRecorder.prepare();
+                new RecordSpeechTask(VoiceActivity.this, fileName, R.id.buttonRecord3).execute();
+                //showRecordDialog(fileName, R.id.buttonRecord3);
             }
         });
     }
@@ -278,7 +289,7 @@ public class VoiceActivity extends Activity {
         protected ResponseResult doInBackground(String[]... strings) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SpeechProClient client = new SpeechProClient();
-            InputStream stream = client.executeEnroll(prefs.getString("key_server", "") + "/avis/vk_api2/enroll.php",  prefs.getString("key_key", ""), strings[0]);
+            InputStream stream = client.executeEnroll("http://voicekey.speechpro-usa.com/avis/vk_api2/enroll.php",  prefs.getString("key_key", ""), strings[0]);
             ResponseParser parser = new ResponseParser(context);
             return parser.getEnrollResult(stream, false);
 

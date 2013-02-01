@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import com.voici.R;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
@@ -46,7 +48,7 @@ public class DoneRetakeDialog extends Dialog {
             public void onClick(View view) {
                 try {
                     final MediaPlayer player = new MediaPlayer();
-                    player.setDataSource(filePath);
+                    player.setDataSource(new FileInputStream(new File(filePath)).getFD());
                     player.prepare();
                     player.start();
                     player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {

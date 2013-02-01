@@ -289,7 +289,7 @@ public class VoiceActivity extends Activity {
         protected ResponseResult doInBackground(String[]... strings) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             SpeechProClient client = new SpeechProClient();
-            InputStream stream = client.executeEnroll("http://voicekey.speechpro-usa.com/avis/vk_api2/enroll.php",  prefs.getString("key_key", ""), strings[0]);
+            InputStream stream = client.executeEnroll(prefs.getString("key_server", "") + "/avis/vk_api2/enroll.php",  prefs.getString("key_key", ""), strings[0]);
             ResponseParser parser = new ResponseParser(context);
             return parser.getEnrollResult(stream, false);
 

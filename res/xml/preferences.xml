@@ -5,10 +5,10 @@
     <android.preference.PreferenceCategory android:title="Server settings">
 
 
-        <!--<EditTextPreference android:key="key_server"-->
-                            <!--android:defaultValue="http://voicekey.speechpro-usa.com"-->
-                            <!--android:title="server address"-->
-                            <!--/>-->
+        <EditTextPreference android:key="key_server"
+                            android:defaultValue="http://voicekey.speechpro-usa.com"
+                            android:title="server address"
+                            />
 
         <EditTextPreference android:key="key_key"
                             android:defaultValue="zab"

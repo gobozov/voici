@@ -264,10 +264,12 @@ public class VoiceActivity extends Activity {
 
         private ProgressDialog dialog;
         private Context context;
+        SharedPreferences prefs;
 
         private EnrollTask(Context context) {
             this.context = context;
             this.dialog = new ProgressDialog(context);
+            this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
         }
 
         @Override
@@ -275,6 +277,12 @@ public class VoiceActivity extends Activity {
 
             if (!Utils.isInternetAvailable(context)){
                 Utils.showMessageDialog(context, "Internet not available.", "You don't have an internet connection, check it and try again.");
+                cancel(true);
+                return;
+            }
+
+            if (prefs.getString("key_server", "") == null || prefs.getString("key_server", "").equals("")){
+                Utils.showMessageDialog(context, "Server is unknown.", "Please, set up server address in app settings.");
                 cancel(true);
                 return;
             }

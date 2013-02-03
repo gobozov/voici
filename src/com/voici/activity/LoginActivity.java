@@ -255,10 +255,12 @@ public class LoginActivity extends Activity {
 
         private ProgressDialog dialog;
         private Context context;
+        SharedPreferences prefs;
 
         private EnrollVerifyTask(Context context) {
             this.context = context;
             this.dialog = new ProgressDialog(context);
+            this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
         }
 
         @Override
@@ -266,6 +268,12 @@ public class LoginActivity extends Activity {
 
             if (!Utils.isInternetAvailable(context)) {
                 Utils.showMessageDialog(context, "Internet not available.", "You don't have an internet connection, check it and try again.");
+                cancel(true);
+                return;
+            }
+
+            if (prefs.getString("key_server", "") == null || prefs.getString("key_server", "").equals("")){
+                Utils.showMessageDialog(context, "Server is unknown.", "Please, set up server address in app settings.");
                 cancel(true);
                 return;
             }
@@ -278,7 +286,7 @@ public class LoginActivity extends Activity {
 
         @Override
         protected ResponseResult doInBackground(String... strings) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
             SpeechProClient client = new SpeechProClient();
             InputStream stream = client.executeEnrollVerify(prefs.getString("key_server", "") + "/avis/vk_api2/enroll_verify.php", prefs.getString("key_key", ""), strings[0], strings[1]);
             ResponseParser parser = new ResponseParser(context);

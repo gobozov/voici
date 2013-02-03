@@ -6,7 +6,7 @@
 
 
         <EditTextPreference android:key="key_server"
-                            android:defaultValue="http://voicekey.speechpro-usa.com"
+                            android:defaultValue=""
                             android:title="server address"
                             />
 
